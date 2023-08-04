@@ -14,12 +14,12 @@ bool verificaPalindromo(char texto[]){
 }
 
 int main() {
-    char texto[50];
+    char* texto = (char*)malloc(200 * sizeof(char));
 
-    scanf("%[^\r\n]%*c", texto);
+    scanf(" %[^\r\n]%*c", texto);
     while(strcmp(texto, "FIM")){
         printf("%s\n", verificaPalindromo(texto) ? "SIM" : "NAO");
-        scanf("%[^\r\n]%*c", texto);
+        scanf(" %[^\r\n]%*c", texto);
     }
     return 0;
 }
