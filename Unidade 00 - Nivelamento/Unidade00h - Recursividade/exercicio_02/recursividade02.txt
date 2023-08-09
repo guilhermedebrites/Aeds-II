@@ -1,0 +1,36 @@
+• Por que o código abaixo imprime 2, 1, 0, 0, 1 e 2?
+---------------------------- 
+void printRecursivo(){
+	printRecursivo(2);
+}
+
+void printRecursivo(int i){
+	System.out.println(i);
+	if (i > 0){
+		printRecursivo(i - 1);
+	}
+	System.out.println(i);
+ }
+---------------------------- 
+
+1- printRecursivo é chamado passando o valor 2
+-> valor 2 é printado 
+verifica a condição 2 > 0
+VERDADEIRO
+printRecursivo é chamado passando o valor 1
+valor 1 é printado 
+verifica a condição 1 > 0
+VERDADEIRO
+printRecursivo é chamado passando o valor 0
+valor 0 é printado 
+verifica a condição 0 > 0
+NEGADA
+valor 0 é printado
+voltamos ao printRecursivo(1)
+valor 1 é printado
+voltamos ao printRecursivo(2)
+valor 2 é printado
+
+	
+	
+	

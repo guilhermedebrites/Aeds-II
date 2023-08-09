@@ -1,0 +1,17 @@
+• Qual é a diferença entre os dois métodos abaixo?
+---------------------------
+int m1(int i){
+	return i--;
+}
+
+int m2(int i){
+	return --i;
+}
+
+---------------------------
+RESPOSTA: 
+
+O primeiro é pós decremento, significa que a variavel sera retornada e 
+depois havera a subtração.
+
+O segundo é pre decremento, havara a subtração e retornarar o resultado.

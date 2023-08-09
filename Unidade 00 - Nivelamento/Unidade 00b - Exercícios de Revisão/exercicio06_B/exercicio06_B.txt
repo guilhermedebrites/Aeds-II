@@ -1,0 +1,31 @@
+• Qual das duas versões é mais fácil de entender?
+---------------------------
+boolean isConsoante(String s, int i){
+	boolean resp= true;
+	if (i == s.length()){
+		resp = true;
+	} else if (isConsoante(s.charAt(i)) == false){
+		resp = false;
+	} else {
+		resp = isConsoante(s, i + 1);
+	}
+	return resp;
+}
+
+boolean isConsoante(String s, int i){
+	boolean resp= true;
+	if (i < s.length()){
+		if (!isConsoante(s.charAt(i))){
+			resp = false;
+		} else {
+			resp = isConsoante(s, i + 1);
+		}
+	} else {
+		resp = true;
+	}
+	return resp;
+}
+---------------------------
+RESPOSTA:
+
+O primeiro, por ser menos código e mais simples.

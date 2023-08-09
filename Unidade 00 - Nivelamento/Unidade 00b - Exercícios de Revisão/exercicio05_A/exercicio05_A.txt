@@ -1,0 +1,16 @@
+boolean isLetra (char c){
+	return (c >= 'A' && c <=‘Z' || c >=‘a' && c <=‘Z');
+}
+
+RESPOSTA:
+
+O código acima recebe um char e verifica se é uma letra, caso seja, retorna true.
+
+boolean isConsoante (char c){
+	return (isLetra(c) == true && isVogal(c) == false);
+}
+
+RESPOSTA:
+
+O código acima chama a função isLetra para verificar se é uma letra e isVogal esperando um retorno negativo para que seja uma consoante,
+caso os dois resultados sejam os esperados isConsoante retorna true.

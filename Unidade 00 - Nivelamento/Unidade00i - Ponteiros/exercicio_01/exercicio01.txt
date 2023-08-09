@@ -1,0 +1,17 @@
+• Explique o que o programa abaixo imprime na tela
+---------------------------- 
+class Ponteiro01Array {
+	public static void main (String[] args) {
+		int[] vet = new int [5];
+		escrever(vet);
+		vet = new int [5];
+		escrever(vet);
+	}
+}
+
+
+RESPOSTA:
+
+O primeiro metodo escrever printa o endereço de memória da primeira
+posição do array, ja o segundo printa endereço de memória da primeira
+posição do novo array.

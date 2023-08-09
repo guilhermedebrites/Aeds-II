@@ -1,0 +1,15 @@
+boolean doidao (char c){
+	boolean resp = false;
+	int v = (int) c;
+	if (v == 65 || v == 69 || v == 73 || v == 79 || v == 85 || v == 97 || v == 101 || v ==105 || v == 111 || v == 117){
+		resp = true;
+	}
+	return resp;
+}
+
+RESPOSTA:
+
+O código acima transforma um char em seu valor int na tabela ASCII e o compara com os valores 65, 69, 73, 79, 85, 97, 101, 111, 117 e caso a comparação bater, 
+atribui TRUE a varíavel resp.
+
+

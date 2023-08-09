@@ -1,0 +1,13 @@
+Por que o código abaixo imprime [46 - 11]?
+---------------------------
+int x = 23, y = 23;
+	x = x << 1;
+	y = y >> 1;
+System.out.println(“[” + x + “ - ” + y + “]”)
+---------------------------
+
+RESPOSTA:
+
+Porque << 1, significa que está avançando uma casa para a esquerda,
+multiplicando o numero por 2, já >> 1, esta recuando uma casa para a direita,
+dividindo o numero por 2.

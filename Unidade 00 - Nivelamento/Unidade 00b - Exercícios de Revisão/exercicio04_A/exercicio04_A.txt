@@ -1,0 +1,32 @@
+boolean doidao (char c){
+	boolean resp= false;
+	int v = (int) c;
+	if (v == 65 || v == 69 || v == 73 || v == 79 || v == 85 || v == 97 || v == 101 || v ==105 || v == 111 || v == 117){
+		resp = true;
+	}
+	return resp;
+	}
+	
+RESPOSTA:
+
+O código acima transforma um char em seu valor int na tabela ASCII e o compara com os valores 65, 69, 73, 79, 85, 97, 101, 111, 117 e caso a comparação bater,
+atribui TRUE a varíavel resp.
+
+	
+char toUpper(char c){
+	return (c >= ‘a' && c <= ‘z') ? ((char) (c – 32)) : c ;
+}
+
+RESPOSTA:
+
+O código acima recebe um char, verifica se ele está entre a minusculo e z minutos na tabela ASCII, caso esteja retorna o seu char correspondente maiusculo, 
+caso não esteja retorna o próprio char.
+
+boolean isVogal (char c){
+	c = toUpper(c);
+	return (c =='A' || c =='E' || c =='I' || c =='O' || c =='U');
+}
+
+REPOSTA: 
+
+O código acima recebe um char, transforma ele em maisculo com a função toUpper e verifica se ele é igual a alguma das vogais, caso sim, retorna true.
