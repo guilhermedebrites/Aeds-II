@@ -7,7 +7,7 @@ public class Main {
             String texto = entrada.nextLine();
 
             while(!texto.equals("FIM")){
-                if(verificaPalindromo(texto)){
+                if(verificaPalindromo(texto, 0, texto.length() - 1 )){
                     System.out.println("SIM");
                 }else{
                     System.out.println("NAO");
@@ -17,15 +17,16 @@ public class Main {
 
     }
 
-    static boolean verificaPalindromo(String texto){
-        int i;
-        int j;
-        for(i = 0, j = (texto.length() - 1) ; i < texto.length() / 2; i++, j--){
-            if(texto.charAt(i) != texto.charAt(j)){
-                return false;
-            }
+    static boolean verificaPalindromo(String texto, int inicio, int fim){
+        if(inicio >= fim){
+            return true;
         }
-        return true;
+
+        if(texto.charAt(inicio) != texto.charAt(fim)){
+            return false;
+        }
+
+        return verificaPalindromo(texto, inicio + 1, fim - 1);
     }
 
 }
