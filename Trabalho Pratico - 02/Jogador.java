@@ -1,13 +1,29 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 import java.util.regex.Pattern;
 
 public class Jogador {
 
     public static void main(String[] args){
-        Jogador jogador = new Jogador();
         try{
-            jogador.ler("verde/tmp/Players.csv");
+            Jogador jogador = new Jogador();
+            Map<Integer, Jogador> mapper = new HashMap<Integer, Jogador>();
+            jogador.ler("players.csv", mapper);
+
+            Scanner sc = new Scanner(System.in);
+            String entrada = "";
+
+            while(!entrada.equals("FIM")){
+                entrada = sc.nextLine();
+                if(entrada.equals("FIM")){
+                    break;
+                }
+                Jogador player = mapper.get(Integer.parseInt(entrada));
+                player.imprimir();
+            }
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -132,7 +148,7 @@ public class Jogador {
 		return novo;
 	}
 
-    public void ler(String nomeDoArquivo) throws Exception{
+    public void ler(String nomeDoArquivo, Map<Integer, Jogador> mapper) throws Exception{
         FileReader file = new FileReader(nomeDoArquivo);
         BufferedReader buffer = new BufferedReader(file);
 
@@ -159,21 +175,21 @@ public class Jogador {
                 jogador.setCidadeNascimento(player.length > 6 && !player[6].isEmpty() ? player[6] : "não informado");
                 jogador.setEstadoNascimento(player.length > 7 && !player[7].isEmpty() ? player[7] : "não informado");
             }catch(NumberFormatException e){
-                String teste = "";
-                teste += player[4];
-                teste += ", ";
+                String str = "";
+                str += player[4];
+                str += ", ";
                 if(player.length > 5 && !player[5].isEmpty()){
-                    teste += player[5];
+                    str += player[5];
                 }else{
-                    teste += "";
+                    str += "";
                 }
-                jogador.setUniversidade(teste);
+                jogador.setUniversidade(str);
                 jogador.setAnoNascimento(player.length > 6 && !player[6].isEmpty() ? Integer.parseInt(player[6]) : 0);
                 jogador.setCidadeNascimento(player.length > 7 && !player[7].isEmpty() ? player[7] : "não informado");
                 jogador.setEstadoNascimento(player.length > 8 && !player[8].isEmpty() ? player[8] : "não informado");
             }
 
-            jogador.imprimir();
+            mapper.put(jogador.getId(), jogador);
         }
         buffer.close();
     }
