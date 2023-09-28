@@ -21,7 +21,7 @@ void imprimir(Jogador *jogador){
 
 void replaceVirgula(char *str){
     int tamanho = strlen(str);
-    char tmp[2 * tamanho];
+    char tmp[3 * tamanho];
     int j = 0; 
 
     for (int i = 0; i < tamanho; i++) {
@@ -49,9 +49,27 @@ void replaceVirgula(char *str){
         }
         
     }
+
+    if (tmp[j - 2] == ',') {
+        tmp[j-1] = 'n';
+        tmp[j++] = 'a';
+        tmp[j++] = 'o';
+        tmp[j++] = ' ';
+        tmp[j++] = 'i';
+        tmp[j++] = 'n';
+        tmp[j++] = 'f';
+        tmp[j++] = 'o';
+        tmp[j++] = 'r';
+        tmp[j++] = 'm';
+        tmp[j++] = 'a';
+        tmp[j++] = 'd';
+        tmp[j++] = 'o';
+    }
+
     tmp[j] = '\0';
     strcpy(str, tmp);
 }
+
 
 void clone(Jogador *jogador, Jogador *novo){
     novo->id = jogador->id;
@@ -107,9 +125,10 @@ void ler(Jogador* jogador, char str[300]){
 int main(){
 
     Jogador players[3923];
+    Jogador clonedPlayers[3923];
     char n[5];
 
-    FILE *arq = fopen("/tmp/players.csv", "r");
+    FILE *arq = fopen("D:\\Algoritmos\\Aeds-II\\Trabalho Pratico - 02\\C_TP02Q04-Pesquisa_Binaria\\tmp\\players.csv", "r");
 
     if(arq == NULL){
         printf("File not found\n");
@@ -124,9 +143,11 @@ int main(){
         i++;
     }
 
+    getchar();
     scanf("%s", n);
     while(strcmp(n, "FIM") != 0){
-        imprimir(&players[atoi(n)]);
+        int indice = atoi(n);
+        clone(&players[indice], &clonedPlayers[indice]);
         scanf("%s", n);
     }
     fclose(arq);
