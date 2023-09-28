@@ -1,5 +1,11 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -10,8 +16,9 @@ public class Jogador {
     public static void main(String[] args){
         try{
             Jogador jogador = new Jogador();
+            ArrayList<Jogador> arrayJogador = new ArrayList<Jogador>();
             Map<Integer, Jogador> mapper = new HashMap<Integer, Jogador>();
-            jogador.ler("players.csv", mapper);
+            jogador.ler("/tmp/players.csv", mapper);
 
             Scanner sc = new Scanner(System.in);
             String entrada = "";
@@ -22,11 +29,45 @@ public class Jogador {
                     break;
                 }
                 Jogador player = mapper.get(Integer.parseInt(entrada));
-                player.imprimir();
+                arrayJogador.add(player);
+            }
+
+            entrada = "";
+            while(!entrada.equals("FIM")){
+                entrada = sc.nextLine();
+                if(entrada.equals("FIM")){
+                    break;
+                }
+                System.out.println(pesquisaSequencial(arrayJogador, entrada) ? "SIM" : "NAO");
             }
         }catch(Exception e){
             e.printStackTrace();
         }
+    }
+
+    static boolean pesquisaSequencial(ArrayList<Jogador> player, String name) throws IOException{
+        FileWriter escritor = new FileWriter("matrícula_sequencial.txt");
+        BufferedWriter buffer = new BufferedWriter(escritor);
+        buffer.write("Matricula: 808721\t");
+        int contadorComparacoes = 0;
+
+        LocalDateTime dataHoraInicio = LocalDateTime.now();
+
+        boolean resp = false;
+        for(int i = 0; i < player.size(); i++){
+            contadorComparacoes++;
+            if(name.equals(player.get(i).getNome())){
+                resp = true;
+                i = player.size();
+            }
+        }
+        LocalDateTime dataHoraFinal = LocalDateTime.now();
+        Duration duracao = Duration.between(dataHoraInicio, dataHoraFinal);
+        long duracaoMillis = duracao.toMillis();
+        buffer.write("Tempo de execucao: " + duracaoMillis + "s\t");
+        buffer.write("Numero de comparacoes: " + contadorComparacoes + "\t");
+        buffer.close();
+        return resp;
     }
 
     private int id;
@@ -130,10 +171,9 @@ public class Jogador {
     }
 
     public void imprimir(){
-        System.out.println("[" + this.id + " ## " + this.nome + " ## " + this.altura + 
-                            " ## " + this.peso + " ## " + this.universidade + 
-                            " ## " + this.anoNascimento + " ## " + this.cidadeNascimento +
-                            " ## " + this.estadoNascimento + "]");
+        System.out.println("["+ id +" ## "+ nome + " ## " + altura + " ## " + peso + " ## " + 
+                            anoNascimento + " ## " + universidade + " ## " + cidadeNascimento + " ## " + 
+                            estadoNascimento +"]");
     }
 
     protected Jogador clone() throws CloneNotSupportedException {
