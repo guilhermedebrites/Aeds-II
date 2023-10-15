@@ -18,6 +18,12 @@ typedef struct
     char estadoNascimento[MAX_LENGTH];
 } Jogador;
 
+void swap(Jogador *a, Jogador *b){
+    Jogador tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
 void imprimir(Jogador *jogador)
 {
     printf("[%i ## %s ## %i ## %i ## %i ## %s ## %s ## %s]\n", jogador->id, jogador->nome, jogador->altura, jogador->peso, jogador->anoNascimento, jogador->universidade, jogador->cidadeNascimento, jogador->estadoNascimento);
@@ -139,29 +145,34 @@ void ler(Jogador *jogador, char str[300])
     }
 }
 
-int ordenaShellsort(Jogador *array, int tam)
+int ordenaQuickSort(Jogador *jogador, int esq, int dir)
 {
-    int i, j, h, aux;
+    int i = esq, j = dir;
     int cmp = 0;
-    h = tam / 2;
-
-    while (h > 0)
+    Jogador jogadorPivo = jogador[(dir + esq) / 2];
+    int pivo = jogadorPivo.estadoNascimento;
+    while (i <= j)
     {
-        for (i = h; i < tam; i++)
+        while (strcmp(jogador[i].estadoNascimento, pivo) < 0)
+            cmp++;
+            i++;
+        while (strcmp(jogador[j].estadoNascimento, pivo) > 0)
+            cmp++;
+            j--;
+        if (i <= j)
         {
-            aux = array[i].peso;
-            j = i;
-            while (j >= h && array[j - h].peso > aux)
-            {
-                cmp++;
-                array[j].peso = array[j - h].peso;
-                j = j - h;
-            }
-            array[j].peso = aux;
+            cmp++;
+            swap(jogador + i, jogador + j);
+            i++;
+            j--;
         }
-        h = h / 2;
     }
+    if (esq < j)
+        ordenaQuickSort(jogador, esq, j);
+    if (i < dir)
+        ordenaQuickSort(jogador, i, dir);
 
+    return cmp;
 }
 
 int main()
@@ -207,7 +218,7 @@ int main()
     clock_t inicio, fim;
     double total;
 
-    cmp = ordenaShellsort(clonedPlayers, j);
+    cmp = ordenaQuickSort(clonedPlayers, 0, j);
 
     total = ((fim - inicio) / (double)CLOCKS_PER_SEC);
     fprintf(tempArq, "808721\t%fs.\t%d", total, cmp);
