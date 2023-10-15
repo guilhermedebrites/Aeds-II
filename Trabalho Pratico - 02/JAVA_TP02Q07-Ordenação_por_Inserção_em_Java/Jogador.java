@@ -53,20 +53,19 @@ public class Jogador {
             int tmp = jogadores.get(i).getAnoNascimento();
             int j = i - 1;
 
-            if()
             while ((j >= 0) && (jogadores.get(j).getAnoNascimento() >= tmp)) {
-                if(jogadores.get(j).getAnoNascimento() == tmp){
-                    if(jogadores.get(j).getNome().compareTo(jogadores.get(j + 1).getNome()) > 0){
+                if (jogadores.get(j).getAnoNascimento() == tmp) {
+                    if (jogadores.get(j).getNome().compareTo(jogadores.get(j + 1).getNome()) > 0) {
                         jogadores.set(j + 1, jogadores.get(j));
                         j--;
-                    }else{
+                    } else {
                         jogadores.set(j + 1, jogadores.get(j));
                         j--;
                     }
+                }
+                jogadores.set(j + 1, jogadores.get(tmp));
             }
-            jogadores.set(j + 1, jogadores.get(tmp));
         }
-        
 
         buffer.write("Matricula: 808721\t");
         LocalDateTime dataHoraFinal = LocalDateTime.now();
