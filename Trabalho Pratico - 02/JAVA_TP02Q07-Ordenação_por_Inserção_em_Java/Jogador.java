@@ -32,7 +32,7 @@ public class Jogador {
                     }
                 }
             }
-            ordenarSelecao(playersInseridos);
+            ordenarInsercao(playersInseridos);
             for (int i = 0; i < playersInseridos.size(); i++) {
                 playersInseridos.get(i).imprimir();
             }
@@ -41,7 +41,7 @@ public class Jogador {
         }
     }
 
-    public static void ordenarSelecao(ArrayList<Jogador> jogadores) throws IOException {
+    public static void ordenarInsercao(ArrayList<Jogador> jogadores) throws IOException {
 
         FileWriter escritor = new FileWriter("808721_insercao.txt");
         BufferedWriter buffer = new BufferedWriter(escritor);
@@ -49,22 +49,29 @@ public class Jogador {
         LocalDateTime dataHoraInicio = LocalDateTime.now();
         int contadorComparacoes = 0;
 
-        for (int i = 1; i < jogadores.size(); i++) {
-            int tmp = jogadores.get(i).getAnoNascimento();
-            int j = i - 1;
+        try {
+            for (int i = 1; i < jogadores.size(); i++) {
+                Jogador tmp = jogadores.get(i);
+                int j = i - 1;
 
-            while ((j >= 0) && (jogadores.get(j).getAnoNascimento() >= tmp)) {
-                if (jogadores.get(j).getAnoNascimento() == tmp) {
-                    if (jogadores.get(j).getNome().compareTo(jogadores.get(j + 1).getNome()) > 0) {
-                        jogadores.set(j + 1, jogadores.get(j));
-                        j--;
+                while ((j >= 0) && (jogadores.get(j).getAnoNascimento() >= tmp.getAnoNascimento())) {
+                    if (jogadores.get(j).getAnoNascimento() == tmp.getAnoNascimento()) {
+                        contadorComparacoes++;
+                        if (jogadores.get(j).getNome().compareTo(tmp.getNome()) > 0) {
+                            jogadores.set(j + 1, jogadores.get(j));
+                            j--;
+                        } else {
+                            break;
+                        }
                     } else {
                         jogadores.set(j + 1, jogadores.get(j));
                         j--;
                     }
                 }
-                jogadores.set(j + 1, jogadores.get(tmp));
+                jogadores.set(j + 1, tmp);
             }
+        } catch (Exception e) {
+
         }
 
         buffer.write("Matricula: 808721\t");
