@@ -189,7 +189,7 @@ int main()
     int contador = 0;
     char n[5];
 
-    FILE *arq = fopen("/home/guilherme/Documentos/Aeds-II/Trabalho Pratico - 02/C_TP02Q04-Pesquisa_Binaria/tmp/players.csv", "r");
+    FILE *arq = fopen("D:\\Algoritmos\\Aeds-II\\Trabalho Pratico - 02\\C_TP02Q10-Quicksort_em_C\\tmp\\players.csv", "r");
 
     if (arq == NULL)
     {
