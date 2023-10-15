@@ -18,10 +18,11 @@ typedef struct
     char estadoNascimento[MAX_LENGTH];
 } Jogador;
 
-void swap(Jogador *a, Jogador *b){
-    Jogador tmp = *a;
-    *a = *b;
-    *b = tmp;
+void swap(Jogador array[] ,int i, int j)
+{
+    Jogador temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
 }
 
 void imprimir(Jogador *jogador)
@@ -150,27 +151,32 @@ int ordenaQuickSort(Jogador *jogador, int esq, int dir)
     int i = esq, j = dir;
     int cmp = 0;
     Jogador jogadorPivo = jogador[(dir + esq) / 2];
-    int pivo = jogadorPivo.estadoNascimento;
+    char pivo[MAX_LENGTH];
+    strcpy(pivo, jogadorPivo.estadoNascimento);
     while (i <= j)
     {
         while (strcmp(jogador[i].estadoNascimento, pivo) < 0)
-            cmp++;
+        {
             i++;
-        while (strcmp(jogador[j].estadoNascimento, pivo) > 0)
             cmp++;
+        }
+        while (strcmp(jogador[j].estadoNascimento, pivo) > 0)
+        {
             j--;
+            cmp++;
+        }
         if (i <= j)
         {
-            cmp++;
-            swap(jogador + i, jogador + j);
+            swap(jogador, i, j);
             i++;
             j--;
+            cmp++;
         }
     }
     if (esq < j)
-        ordenaQuickSort(jogador, esq, j);
+        cmp += ordenaQuickSort(jogador, esq, j);
     if (i < dir)
-        ordenaQuickSort(jogador, i, dir);
+        cmp += ordenaQuickSort(jogador, i, dir);
 
     return cmp;
 }
