@@ -139,29 +139,39 @@ void ler(Jogador *jogador, char str[300])
     }
 }
 
+void insercaoPorCor(Jogador *array, int n, int cor, int h){
+    for (int i = (h + cor); i < n; i+=h) {
+        Jogador tmp = array[i];
+        int j = i - h;
+        while ((j >= 0) && ((int)array[j].peso >= (int)tmp.peso)) {
+            if((int)array[j].peso == (int)tmp.peso){
+                if(strcmp(array[j].nome, tmp.nome) > 0){
+                    array[j + h] = array[j];
+                    j-=h;
+                }else{
+                    break;
+                }
+            }else{
+                array[j + h] = array[j];
+                j-=h;
+            }
+        }
+        array[j + h] = tmp;
+    }
+}
+
 int ordenaShellsort(Jogador *array, int tam)
 {
-    int i, j, h, aux;
-    int cmp = 0;
-    h = tam / 2;
+    int h = 1;
 
-    while (h > 0)
-    {
-        for (i = h; i < tam; i++)
-        {
-            aux = array[i].peso;
-            j = i;
-            while (j >= h && array[j - h].peso > aux)
-            {
-                cmp++;
-                array[j].peso = array[j - h].peso;
-                j = j - h;
-            }
-            array[j].peso = aux;
+    do { h = (h * 3) + 1; } while (h < tam);
+
+    do {
+        h /= 3;
+        for(int cor = 0; cor < h; cor++){
+            insercaoPorCor(array, tam, cor, h);
         }
-        h = h / 2;
-    }
-
+    } while (h != 1);
 }
 
 int main()
@@ -172,7 +182,7 @@ int main()
     int contador = 0;
     char n[5];
 
-    FILE *arq = fopen("/home/guilherme/Documentos/Aeds-II/Trabalho Pratico - 02/C_TP02Q04-Pesquisa_Binaria/tmp/players.csv", "r");
+    FILE *arq = fopen("/tmp/players.csv", "r");
 
     if (arq == NULL)
     {

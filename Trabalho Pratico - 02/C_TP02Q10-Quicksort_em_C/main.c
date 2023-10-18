@@ -18,13 +18,6 @@ typedef struct
     char estadoNascimento[MAX_LENGTH];
 } Jogador;
 
-void swap(Jogador array[] ,int i, int j)
-{
-    Jogador temp = array[i];
-    array[i] = array[j];
-    array[j] = temp;
-}
-
 void imprimir(Jogador *jogador)
 {
     printf("[%i ## %s ## %i ## %i ## %i ## %s ## %s ## %s]\n", jogador->id, jogador->nome, jogador->altura, jogador->peso, jogador->anoNascimento, jogador->universidade, jogador->cidadeNascimento, jogador->estadoNascimento);
@@ -146,6 +139,13 @@ void ler(Jogador *jogador, char str[300])
     }
 }
 
+void swap(Jogador array[], int i, int j)
+{
+    Jogador temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+}
+
 int ordenaQuickSort(Jogador *jogador, int esq, int dir)
 {
     int i = esq, j = dir;
@@ -174,11 +174,34 @@ int ordenaQuickSort(Jogador *jogador, int esq, int dir)
         }
     }
     if (esq < j)
-        cmp += ordenaQuickSort(jogador, esq, j);
+    {
+        cmp++;
+        ordenaQuickSort(jogador, esq, j);
+    }
     if (i < dir)
-        cmp += ordenaQuickSort(jogador, i, dir);
+    {
+        cmp++;
+        ordenaQuickSort(jogador, i, dir);
+    }
 
     return cmp;
+}
+
+void garanteOrdem(Jogador *jogador, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = i + 1; j < n; j++)
+        {
+            if (strcmp(jogador[i].estadoNascimento, jogador[j].estadoNascimento) == 0)
+            {
+                if (strcmp(jogador[i].nome, jogador[j].nome) > 0)
+                {
+                    swap(jogador, i, j);
+                }
+            }
+        }
+    }
 }
 
 int main()
@@ -189,7 +212,7 @@ int main()
     int contador = 0;
     char n[5];
 
-    FILE *arq = fopen("D:\\Algoritmos\\Aeds-II\\Trabalho Pratico - 02\\C_TP02Q10-Quicksort_em_C\\tmp\\players.csv", "r");
+    FILE *arq = fopen("/tmp/players.csv", "r");
 
     if (arq == NULL)
     {
@@ -219,14 +242,17 @@ int main()
     char name[100];
     scanf(" %[^\n]s", name);
 
-    FILE *tempArq = fopen("808721_shellsort.txt", "w");
+    FILE *tempArq = fopen("808721_quicksort.txt", "w");
     int cmp;
     clock_t inicio, fim;
     double total;
 
-    cmp = ordenaQuickSort(clonedPlayers, 0, j);
+    inicio = clock();
+    cmp = ordenaQuickSort(clonedPlayers, 0, j - 1);
+    garanteOrdem(clonedPlayers, j);
+    fim = clock();
 
-    total = ((fim - inicio) / (double)CLOCKS_PER_SEC);
+    total = ((double)(fim - inicio)) / CLOCKS_PER_SEC;
     fprintf(tempArq, "808721\t%fs.\t%d", total, cmp);
     fclose(tempArq);
 
