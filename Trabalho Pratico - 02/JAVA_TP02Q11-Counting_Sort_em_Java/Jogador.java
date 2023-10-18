@@ -16,7 +16,7 @@ public class Jogador {
             Jogador jogador = new Jogador();
             ArrayList<Jogador> players = new ArrayList<Jogador>();
             ArrayList<Jogador> playersInseridos = new ArrayList<Jogador>();
-            jogador.ler("./tmp/players.csv", players);
+            jogador.ler("/tmp/players.csv", players);
 
             Scanner sc = new Scanner(System.in);
             String entrada = "";
@@ -32,7 +32,8 @@ public class Jogador {
                     }
                 }
             }
-            ordenarInsercao(playersInseridos);
+            ordernarCountingSort(playersInseridos);
+            garanteOrdem(playersInseridos);
             for (int i = 0; i < playersInseridos.size(); i++) {
                 playersInseridos.get(i).imprimir();
             }
@@ -41,7 +42,36 @@ public class Jogador {
         }
     }
 
-    public static void ordenarInsercao(ArrayList<Jogador> jogadores) throws IOException {
+    public static void trocar(ArrayList<Jogador> jogadores, int i, int j) {
+        Jogador temp = jogadores.get(i);
+        jogadores.set(i, jogadores.get(j));
+        jogadores.set(j, temp);
+    }
+
+    public static void garanteOrdem(ArrayList<Jogador> jogadores) {
+        for (int i = 0; i < jogadores.size(); i++) {
+            for (int j = i + 1; j < jogadores.size(); j++) {
+                if (jogadores.get(i).getAltura() == jogadores.get(j).getAltura()) {
+                    if (jogadores.get(i).nome.compareTo(jogadores.get(j).nome) > 0) {
+                        trocar(jogadores, i, j);
+                    }
+                }
+            }
+        }
+    }
+
+    public static int getMaior(ArrayList<Jogador> jogadores) {
+	   int maior = jogadores.get(0).getAltura();
+
+		for (int i = 0; i < jogadores.size(); i++) {
+         if(maior < jogadores.get(i).getAltura()){
+            maior = jogadores.get(i).getAltura();
+         }
+		}
+	   return maior;	
+	}
+
+    public static void ordernarCountingSort(ArrayList<Jogador> jogadores) throws IOException {
 
         FileWriter escritor = new FileWriter("808721_coutingsort.txt");
         BufferedWriter buffer = new BufferedWriter(escritor);
@@ -49,14 +79,31 @@ public class Jogador {
         LocalDateTime dataHoraInicio = LocalDateTime.now();
         int contadorComparacoes = 0;
 
-        int[] count = new int[getMaior() + 1];
-        int[] ordenado = new int[n];
+        int[] count = new int[getMaior(jogadores) + 1];
+        Jogador[] ordenado = new Jogador[jogadores.size()];
 
-	    for (int i = 0; i < count.length; count[i] = 0, i++);
-        for (int i = 0; i < n; count[array[i]]++, i++);
-        for(int i = 1; i < count.length; count[i] += count[i-1], i++);
-        for(int i = n-1; i >= 0; ordenado[count[array[i]]-1] = array[i], count[array[i]]--, i--);
-        for(int i = 0; i < n; array[i] = ordenado[i], i++);
+        for (Jogador jogador : jogadores) {
+            count[jogador.getAltura()] += 1;
+        }
+
+        for (int i = 1; i < count.length; i++) {
+            count[i] += count[i - 1];
+        }
+
+        Jogador[] aux = new Jogador[jogadores.size()];
+
+        for (int i = jogadores.size() - 1; i >= 0; i--) {
+            int altura = jogadores.get(i).getAltura();
+            int index = count[altura] - 1;
+            ordenado[index] = jogadores.get(i);
+            aux[index] = jogadores.get(i);
+            count[altura] -= 1;
+        }
+
+        for (int i = 0; i < ordenado.length; i++) {
+            jogadores.set(i, aux[i]);
+        }
+
 
         buffer.write("Matricula: 808721\t");
         LocalDateTime dataHoraFinal = LocalDateTime.now();
@@ -66,17 +113,6 @@ public class Jogador {
         buffer.write("Numero de comparacoes: " + contadorComparacoes + "\t");
         buffer.close();
     }
-
-    public int getMaior() {
-	   int maior = array[0];
-
-		for (int i = 0; i < n; i++) {
-         if(maior < array[i]){
-            maior = array[i];
-         }
-		}
-	   return maior;	
-	}
 
     private int id;
     private String nome;

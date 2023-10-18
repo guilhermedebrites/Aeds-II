@@ -16,7 +16,7 @@ public class Jogador {
             Jogador jogador = new Jogador();
             ArrayList<Jogador> players = new ArrayList<Jogador>();
             ArrayList<Jogador> playersInseridos = new ArrayList<Jogador>();
-            jogador.ler("./tmp/players.csv", players);
+            jogador.ler("/tmp/players.csv", players);
 
             Scanner sc = new Scanner(System.in);
             String entrada = "";
@@ -33,11 +33,30 @@ public class Jogador {
                 }
             }
             ordenarHeapSort(playersInseridos);
+            garanteOrdem(playersInseridos);
             for (int i = 0; i < playersInseridos.size(); i++) {
                 playersInseridos.get(i).imprimir();
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void trocar(ArrayList<Jogador> jogadores, int i, int j) {
+        Jogador temp = jogadores.get(i);
+        jogadores.set(i, jogadores.get(j));
+        jogadores.set(j, temp);
+    }
+
+    public static void garanteOrdem(ArrayList<Jogador> jogadores) {
+        for (int i = 0; i < jogadores.size(); i++) {
+            for (int j = i + 1; j < jogadores.size(); j++) {
+                if (jogadores.get(i).getAltura() == jogadores.get(j).getAltura()) {
+                    if (jogadores.get(i).nome.compareTo(jogadores.get(j).nome) > 0) {
+                        trocar(jogadores, i, j);
+                    }
+                }
+            }
         }
     }
 

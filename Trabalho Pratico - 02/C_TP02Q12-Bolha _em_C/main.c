@@ -146,46 +146,16 @@ void swap(Jogador array[], int i, int j)
     array[j] = temp;
 }
 
-int ordenaQuickSort(Jogador *jogador, int esq, int dir)
-{
-    int i = esq, j = dir;
-    int cmp = 0;
-    Jogador jogadorPivo = jogador[(dir + esq) / 2];
-    char pivo[MAX_LENGTH];
-    strcpy(pivo, jogadorPivo.estadoNascimento);
-    while (i <= j)
-    {
-        while (strcmp(jogador[i].estadoNascimento, pivo) < 0)
-        {
-            i++;
-            cmp++;
-        }
-        while (strcmp(jogador[j].estadoNascimento, pivo) > 0)
-        {
-            j--;
-            cmp++;
-        }
-        if (i <= j)
-        {
-            swap(jogador, i, j);
-            i++;
-            j--;
-            cmp++;
+int ordenaBolha(Jogador *jogador, int n){
+    for(int i = (n-1); i > 0; i--){
+        for(int j = 0; j < i; j++){
+            if(jogador[j].anoNascimento > jogador[j+1].anoNascimento){
+                swap(jogador, j, j+1);
+            }
         }
     }
-    if (esq < j)
-    {
-        cmp++;
-        ordenaQuickSort(jogador, esq, j);
-    }
-    if (i < dir)
-    {
-        cmp++;
-        ordenaQuickSort(jogador, i, dir);
-    }
-
-    return cmp;
 }
+
 
 void garanteOrdem(Jogador *jogador, int n)
 {
@@ -193,7 +163,7 @@ void garanteOrdem(Jogador *jogador, int n)
     {
         for (int j = i + 1; j < n; j++)
         {
-            if (strcmp(jogador[i].estadoNascimento, jogador[j].estadoNascimento) == 0)
+            if (jogador[i].anoNascimento == jogador[j].anoNascimento)
             {
                 if (strcmp(jogador[i].nome, jogador[j].nome) > 0)
                 {
@@ -212,7 +182,7 @@ int main()
     int contador = 0;
     char n[5];
 
-    FILE *arq = fopen("./tmp/players.csv", "r");
+    FILE *arq = fopen("/tmp/players.csv", "r");
 
     if (arq == NULL)
     {
@@ -242,13 +212,13 @@ int main()
     char name[100];
     scanf(" %[^\n]s", name);
 
-    FILE *tempArq = fopen("808721_quicksort.txt", "w");
+    FILE *tempArq = fopen("808721_bolha.txt", "w");
     int cmp;
     clock_t inicio, fim;
     double total;
 
     inicio = clock();
-    cmp = ordenaQuickSort(clonedPlayers, 0, j - 1);
+    cmp = ordenaBolha(clonedPlayers, j);
     garanteOrdem(clonedPlayers, j);
     fim = clock();
 
