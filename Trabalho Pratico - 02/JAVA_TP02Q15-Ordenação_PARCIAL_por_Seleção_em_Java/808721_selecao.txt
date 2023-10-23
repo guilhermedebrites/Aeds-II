@@ -1,0 +1,1 @@
+Matricula: 808721	Tempo de execucao: 2s	Numero de comparacoes: 45	
