@@ -197,7 +197,7 @@ int main()
     int contador = 0;
     char n[5];
 
-    FILE *arq = fopen("./tmp/players.csv", "r");
+    FILE *arq = fopen("/tmp/players.csv", "r");
 
     if (arq == NULL)
     {

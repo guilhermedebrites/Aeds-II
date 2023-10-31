@@ -16,7 +16,7 @@ public class Jogador {
             Jogador jogador = new Jogador();
             ArrayList<Jogador> players = new ArrayList<Jogador>();
             ArrayList<Jogador> playersInseridos = new ArrayList<Jogador>();
-            jogador.ler("./tmp/players.csv", players);
+            jogador.ler("/tmp/players.csv", players);
 
             Scanner sc = new Scanner(System.in);
             String entrada = "";

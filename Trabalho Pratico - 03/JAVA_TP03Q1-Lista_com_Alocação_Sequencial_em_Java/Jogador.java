@@ -1,11 +1,7 @@
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -14,97 +10,52 @@ public class Jogador {
     public static void main(String[] args) {
         try {
             Jogador jogador = new Jogador();
-            ArrayList<Jogador> players = new ArrayList<Jogador>();
-            ArrayList<Jogador> playersInseridos = new ArrayList<Jogador>();
-            jogador.ler("/tmp/players.csv", players);
+            Lista lista = new Lista();
+            Map<Integer, Jogador> mapper = new HashMap<Integer, Jogador>();
+            jogador.ler("/tmp/players.csv", mapper);
 
             Scanner sc = new Scanner(System.in);
             String entrada = "";
-            while (!entrada.equals("FIM")) {
-                entrada = sc.nextLine();
-                if (entrada.equals("FIM")) {
-                    break;
-                }
-                for(int i = 0; i < (players.size() - 1); i++){
-                    if(players.get(i).getId() == Integer.parseInt(entrada)){
-                        playersInseridos.add(players.get(i).clone());
-                        break;
-                    }
-                }
-            }
-            ordenaQuick(playersInseridos, 0, playersInseridos.size() - 1);
-            garanteOrdem(playersInseridos);
 
-            for(int i = 0; i < 10; i++){
-                playersInseridos.get(i).imprimir();
+            while (true) {
+                entrada = sc.nextLine();
+                if(entrada.equals("FIM")) break;
+                lista.inserirFim(mapper.get(Integer.parseInt(entrada)));
             }
+
+            int number = Integer.parseInt(sc.nextLine());
+
+            for(int i = 0; i < number; i++){
+                entrada = sc.nextLine();
+                String[] metodo = entrada.split(" ");
+                switch(metodo[0]){
+                    case "II":
+                        lista.inserirInicio(mapper.get(Integer.parseInt(metodo[1])));
+                        break;
+                    case "IF":
+                        lista.inserirFim(mapper.get(Integer.parseInt(metodo[1])));
+                        break;
+                    case "I*":
+                        lista.inserir(mapper.get(Integer.parseInt(metodo[2])), Integer.parseInt(metodo[1]));
+                        break;
+                    case "RI":
+                        System.out.println("(R) " + lista.removerInicio().getNome());
+                        break;
+                    case "RF":
+                        System.out.println("(R) " + lista.removerFim().getNome());
+                        break;
+                    case "R*":
+                        System.out.println("(R) " + lista.remover(Integer.parseInt(metodo[1])).getNome());
+                        break;
+                }
+            }
+            lista.mostrar();
+            sc.close();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-    public static void ordenaQuick(ArrayList<Jogador> jogadores, int esq, int dir) throws IOException {
-
-        FileWriter escritor = new FileWriter("808721_quicksort.txt");
-        BufferedWriter buffer = new BufferedWriter(escritor);
-
-        LocalDateTime dataHoraInicio = LocalDateTime.now();
-        int contadorComparacoes = 0;
-
-        int i = esq, j = dir;
-        Jogador jogadorPivo = jogadores.get((dir + esq) / 2);
-        String pivo = jogadorPivo.getEstadoNascimento();
-
-        while (i <= j) {
-            while (jogadores.get(i).getEstadoNascimento().compareTo(pivo) < 0) {
-                i++;
-                contadorComparacoes++;
-            }
-            while (jogadores.get(j).getEstadoNascimento().compareTo(pivo) > 0) {
-                j--;
-                contadorComparacoes++;
-            }
-            if (i <= j) {
-                Jogador aux = jogadores.get(i);
-                jogadores.set(i, jogadores.get(j));
-                jogadores.set(j, aux);
-                i++;
-                j--;
-            }
-        }
-        if (esq < j)
-            ordenaQuick(jogadores, esq, j);
-        if (i < 10 && i < dir)
-            ordenaQuick(jogadores, i, dir);
-
-
-        buffer.write("Matricula: 808721\t");
-        LocalDateTime dataHoraFinal = LocalDateTime.now();
-        Duration duracao = Duration.between(dataHoraInicio, dataHoraFinal);
-        long duracaoMillis = duracao.toMillis();
-        buffer.write("Tempo de execucao: " + duracaoMillis + "s\t");
-        buffer.write("Numero de comparacoes: " + contadorComparacoes + "\t");
-        buffer.close();
-    }
-
-    public static void trocar(ArrayList<Jogador> jogadores, int i, int j) {
-        Jogador temp = jogadores.get(i);
-        jogadores.set(i, jogadores.get(j));
-        jogadores.set(j, temp);
-    }
-
-    public static void garanteOrdem(ArrayList<Jogador> jogadores) {
-        for (int i = 0; i < 10; i++) {
-            for (int j = i + 1; j < 10; j++) {
-                if (jogadores.get(i).getEstadoNascimento().equals(jogadores.get(j).getEstadoNascimento())) {
-                    if (jogadores.get(i).nome.compareTo(jogadores.get(j).nome) > 0) {
-                        trocar(jogadores, i, j);
-                    }
-                }
-            }
-        }
-    }
-
 
     private int id;
     private String nome;
@@ -215,7 +166,6 @@ public class Jogador {
     protected Jogador clone() throws CloneNotSupportedException {
         Jogador novo = new Jogador();
         novo.id = this.id;
-        novo.nome = this.nome;
         novo.altura = this.altura;
         novo.peso = this.peso;
         novo.universidade = this.universidade;
@@ -225,7 +175,7 @@ public class Jogador {
         return novo;
     }
 
-    public void ler(String nomeDoArquivo, ArrayList<Jogador> array) throws Exception {
+    public void ler(String nomeDoArquivo, Map<Integer, Jogador> mapper) throws Exception {
         FileReader file = new FileReader(nomeDoArquivo);
         BufferedReader buffer = new BufferedReader(file);
 
@@ -265,8 +215,98 @@ public class Jogador {
                 jogador.setCidadeNascimento(player.length > 7 && !player[7].isEmpty() ? player[7] : "nao informado");
                 jogador.setEstadoNascimento(player.length > 8 && !player[8].isEmpty() ? player[8] : "nao informado");
             }
-            array.add(jogador);
+
+            mapper.put(jogador.getId(), jogador);
         }
         buffer.close();
+    }
+}
+
+class Lista {
+    Jogador[] array;
+    int n;
+
+    Lista() {
+        this(3923);
+    }
+
+    Lista(int tamanho) {
+        array = new Jogador[tamanho];
+        n = 0;
+    }
+
+    void inserirInicio(Jogador jogador) throws Exception{
+        if( n >= array.length )
+            throw new Exception("Erro!");
+        
+        for(int i = n; i > 0; i--){
+            array[i] = array[i-1];
+        }
+
+        array[0] = jogador;
+        n++;
+    }
+
+    void inserirFim(Jogador jogador) throws Exception{
+        if( n >= array.length )
+            throw new Exception("Erro!");
+
+        array[n] = jogador;
+        n++;
+    }
+
+    void inserir(Jogador jogador, int pos) throws Exception{
+        if( n >= array.length || pos < 0 || pos > n)
+            throw new Exception("Erro!");
+
+        for(int i = n; i > pos; i--){
+            array[i] = array[i-1];
+        }
+
+        array[pos] = jogador;
+        n++;
+    }
+
+    Jogador removerInicio() throws Exception{
+        if(n == 0) 
+            throw new Exception("Erro!");
+
+        Jogador resp = array[0];
+        n--;
+
+        for(int i = 0; i < n; i++){
+            array[i] = array[i + 1];
+        }
+
+        return resp;
+    }
+
+    Jogador removerFim() throws Exception{
+        if(n == 0) 
+            throw new Exception("Erro!");
+
+        return array[--n];
+    }
+
+    Jogador remover(int pos) throws Exception{
+        if(n == 0 || pos < 0 || pos >= n) 
+            throw new Exception("Erro!");
+
+        Jogador resp = array[pos];
+        n--;
+
+        for(int i = pos; i < n; i++){
+            array[i] = array[i + 1];
+        }
+
+        return resp;
+    }
+
+    void mostrar(){
+        for(int i = 0; i < n; i++){
+            System.out.println("["+ i + "]" + " ## " + array[i].getNome() + " ## " + array[i].getAltura() + " ## " + array[i].getPeso() + " ## " +
+                array[i].getAnoNascimento() + " ## " + array[i].getUniversidade() + " ## " + array[i].getCidadeNascimento() + " ## " +
+                array[i].getEstadoNascimento() + " ##");
+        }
     }
 }

@@ -25,17 +25,16 @@ public class Jogador {
                 if (entrada.equals("FIM")) {
                     break;
                 }
-                for(int i = 0; i < (players.size() - 1); i++){
-                    if(players.get(i).getId() == Integer.parseInt(entrada)){
+                for (int i = 0; i < (players.size() - 1); i++) {
+                    if (players.get(i).getId() == Integer.parseInt(entrada)) {
                         playersInseridos.add(players.get(i).clone());
                         break;
                     }
                 }
             }
-            ordenaQuick(playersInseridos, 0, playersInseridos.size() - 1);
+            mergesort(playersInseridos, 0, playersInseridos.size() - 1);
             garanteOrdem(playersInseridos);
-
-            for(int i = 0; i < 10; i++){
+            for (int i = 0; i < playersInseridos.size(); i++) {
                 playersInseridos.get(i).imprimir();
             }
         } catch (Exception e) {
@@ -43,40 +42,68 @@ public class Jogador {
         }
     }
 
-    public static void ordenaQuick(ArrayList<Jogador> jogadores, int esq, int dir) throws IOException {
+    public static void trocar(ArrayList<Jogador> jogadores, int i, int j) {
+        Jogador temp = jogadores.get(i);
+        jogadores.set(i, jogadores.get(j));
+        jogadores.set(j, temp);
+    }
 
-        FileWriter escritor = new FileWriter("808721_quicksort.txt");
+    public static void garanteOrdem(ArrayList<Jogador> jogadores) {
+        for (int i = 0; i < jogadores.size(); i++) {
+            for (int j = i + 1; j < jogadores.size(); j++) {
+                if (jogadores.get(i).getUniversidade().compareTo(jogadores.get(j).getUniversidade()) == 0) {
+                    if (jogadores.get(i).nome.compareTo(jogadores.get(j).nome) > 0) {
+                        trocar(jogadores, i, j);
+                    }
+                }
+            }
+        }
+    }
+
+    public static void ordernarMergeSort(ArrayList<Jogador> jogadores, int esq, int meio, int dir) throws IOException {
+
+        FileWriter escritor = new FileWriter("808721_mergesort.txt");
         BufferedWriter buffer = new BufferedWriter(escritor);
 
         LocalDateTime dataHoraInicio = LocalDateTime.now();
         int contadorComparacoes = 0;
+        int n1 = meio - esq + 1;
+        int n2 = dir - meio;
 
-        int i = esq, j = dir;
-        Jogador jogadorPivo = jogadores.get((dir + esq) / 2);
-        String pivo = jogadorPivo.getEstadoNascimento();
+        ArrayList<Jogador> a1 = new ArrayList<>();
+        ArrayList<Jogador> a2 = new ArrayList<>();
 
-        while (i <= j) {
-            while (jogadores.get(i).getEstadoNascimento().compareTo(pivo) < 0) {
-                i++;
-                contadorComparacoes++;
-            }
-            while (jogadores.get(j).getEstadoNascimento().compareTo(pivo) > 0) {
-                j--;
-                contadorComparacoes++;
-            }
-            if (i <= j) {
-                Jogador aux = jogadores.get(i);
-                jogadores.set(i, jogadores.get(j));
-                jogadores.set(j, aux);
-                i++;
-                j--;
-            }
+        for (int i = 0; i < n1; i++) {
+            a1.add(jogadores.get(esq + i));
         }
-        if (esq < j)
-            ordenaQuick(jogadores, esq, j);
-        if (i < 10 && i < dir)
-            ordenaQuick(jogadores, i, dir);
 
+        for (int j = 0; j < n2; j++) {
+            a2.add(jogadores.get(meio + j + 1));
+        }
+
+        int i = 0, j = 0, k = esq;
+        while (i < n1 && j < n2) {
+            if (a1.get(i).getUniversidade().compareTo(a2.get(j).getUniversidade()) <= 0) {
+                jogadores.set(k, a1.get(i));
+                i++;
+            } else {
+                jogadores.set(k, a2.get(j));
+                j++;
+            }
+            k++;
+        }
+
+        while (i < n1) {
+            jogadores.set(k, a1.get(i));
+            i++;
+            k++;
+        }
+
+        while (j < n2) {
+            jogadores.set(k, a2.get(j));
+            j++;
+            k++;
+        }
 
         buffer.write("Matricula: 808721\t");
         LocalDateTime dataHoraFinal = LocalDateTime.now();
@@ -87,24 +114,14 @@ public class Jogador {
         buffer.close();
     }
 
-    public static void trocar(ArrayList<Jogador> jogadores, int i, int j) {
-        Jogador temp = jogadores.get(i);
-        jogadores.set(i, jogadores.get(j));
-        jogadores.set(j, temp);
-    }
-
-    public static void garanteOrdem(ArrayList<Jogador> jogadores) {
-        for (int i = 0; i < 10; i++) {
-            for (int j = i + 1; j < 10; j++) {
-                if (jogadores.get(i).getEstadoNascimento().equals(jogadores.get(j).getEstadoNascimento())) {
-                    if (jogadores.get(i).nome.compareTo(jogadores.get(j).nome) > 0) {
-                        trocar(jogadores, i, j);
-                    }
-                }
-            }
+    public static void mergesort(ArrayList<Jogador> jogadores, int esq, int dir) throws IOException {
+        if (esq < dir) {
+            int meio = (esq + dir) / 2;
+            mergesort(jogadores, esq, meio);
+            mergesort(jogadores, meio + 1, dir);
+            ordernarMergeSort(jogadores, esq, meio, dir);
         }
     }
-
 
     private int id;
     private String nome;
