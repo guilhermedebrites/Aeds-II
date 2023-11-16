@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #define MAX_LENGTH 100
-#define MAX_TAM 3923
+#define MAX_TAM 6
 
 typedef struct {
     int id;
@@ -17,110 +18,63 @@ typedef struct {
 } Jogador;
 
 Jogador array[MAX_TAM];
-int n;
+int primeiro;
+int ultimo;
 
 void start(){
-    n = 0;
+   primeiro = ultimo = 0;
 }
 
-void inserirInicio(Jogador x) {
-   int i;
-
-   if(n >= MAX_TAM){
-      printf("Erro ao inserir inicio!");
-      exit(1);
-   } 
-
-   for(i = n; i > 0; i--){
-      array[i] = array[i-1];
-   }
-
-   array[0] = x;
-   n++;
-}
-
-
-void inserirFim(Jogador x) {
-   if(n >= MAX_TAM){
-      printf("Erro ao inserir fim!");
+Jogador remover() {
+   if (primeiro == ultimo) {
+      printf("Erro ao remover!");
       exit(1);
    }
 
-   array[n] = x;
-   n++;
-}
-
-
-void inserir(Jogador x, int pos) {
-   int i;
-
-   if(n >= MAX_TAM || pos < 0 || pos > n){
-      printf("Erro ao inserir pos!");
-      exit(1);
-   }
-
-   for(i = n; i > pos; i--){
-      array[i] = array[i-1];
-   }
-
-   array[pos] = x;
-   n++;
-}
-
-
-Jogador removerInicio() {
-   int i;
-   Jogador resp;
-
-   if (n == 0) {
-      printf("Erro ao remover inicio!");
-      exit(1);
-   }
-
-   resp = array[0];
-   n--;
-
-   for(i = 0; i < n; i++){
-      array[i] = array[i+1];
-   }
-
+   Jogador resp = array[primeiro];
+   primeiro = (primeiro + 1) % MAX_TAM;
    return resp;
 }
 
+int mediaAltura() {
+    int somaAltura = 0;
+    int numJogadores = 0;
+    int i;
 
-Jogador removerFim() {
+    for (i = primeiro; i != ultimo; i = (i + 1) % MAX_TAM) {
+        somaAltura += array[i].altura;
+        numJogadores++;
+    }
 
-   if (n == 0) {
-      printf("Erro ao remover fim!");
-      exit(1);
-   }
+    if (numJogadores == 0) {
+        return 0;
+    }
 
-   return array[--n];
+    double media = (double) somaAltura / numJogadores;
+    int mediaArredondada = round(media);
+
+    return mediaArredondada;
 }
 
-Jogador remover(int pos) {
-   int i;
-   Jogador resp;
+void inserir(Jogador x) {
 
-   if (n == 0 || pos < 0 || pos >= n) {
-      printf("Erro ao remover pos!");
-      exit(1);
+   if (((ultimo + 1) % MAX_TAM) == primeiro) {
+      Jogador player = remover();
    }
 
-   resp = array[pos];
-   n--;
-
-   for(i = pos; i < n; i++){
-      array[i] = array[i+1];
+   array[ultimo] = x;
+   ultimo = (ultimo + 1) % MAX_TAM;
+   int media = mediaAltura();
+   if(media != 0){
+    printf("%i\n", media);
    }
-
-   return resp;
 }
-
 
 void mostrar(){
-    for(int i = 0; i < n; i++){
-        printf("[%i] ## %s ## %i ## %i ## %i ## %s ## %s ## %s ##\n", i, array[i].nome, array[i].altura, array[i].peso, array[i].anoNascimento, array[i].universidade, array[i].cidadeNascimento, array[i].estadoNascimento);
+    int i;
+    int count = 0;
+    for(i = primeiro; i != ultimo; i = (i + 1) % MAX_TAM, count++){
+        printf("[%i] ## %s ## %i ## %i ## %i ## %s ## %s ## %s ##\n", count, array[i].nome, array[i].altura, array[i].peso, array[i].anoNascimento, array[i].universidade, array[i].cidadeNascimento, array[i].estadoNascimento);
     }
 }
 
@@ -257,7 +211,7 @@ int main(){
     while(1){
         if(strcmp(a, "FIM") == 0)
             break;
-        inserirFim(players[atoi(a)]);
+        inserir(players[atoi(a)]);
         scanf("%s", a);
     }
 
@@ -274,26 +228,11 @@ int main(){
             strcpy(str[i], token);
             token = strtok(NULL, " ");
         }
-
-        if(strcmp(str[0], "II") == 0){
-            inserirInicio(players[atoi(str[1])]);
+        if(strcmp(str[0], "I") == 0){
+            inserir(players[atoi(str[1])]);
         }
-        else if(strcmp(str[0], "IF") == 0){
-            inserirFim(players[atoi(str[1])]);
-        }
-        else if(strcmp(str[0], "I*") == 0){
-            inserir(players[atoi(str[2])], atoi(str[1]));
-        }
-        else if(strcmp(str[0], "RI") == 0){
-            Jogador player = removerInicio();
-            printf("(R) %s\n", player.nome);
-        }
-        else if(strcmp(str[0], "RF") == 0){
-            Jogador player = removerFim();
-            printf("(R) %s\n", player.nome);
-        }
-        else if(strcmp(str[0], "R*") == 0){
-            Jogador player = remover(atoi(str[1]));
+        else if(strcmp(str[0], "R") == 0){
+            Jogador player = remover();
             printf("(R) %s\n", player.nome);
         }
     }
