@@ -1,74 +1,86 @@
-class Is {
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
-	public static void main(String[] args){
-		
-		String entrada = MyIO.readLine();
-		while(isFim(entrada)){
-			boolean vogal = isVogal(entrada);
-			boolean consoante = isConsoante(entrada);
-			boolean inteiro = isInt(entrada);
-			boolean real = isReal(entrada);
-			
-			
+class Is{
+    public static void main(String args[]){
+        InputStreamReader c = new InputStreamReader(System.in);
+        BufferedReader cd = new BufferedReader(c);
 
-			MyIO.print(vogal ? "SIM " : "NAO ");
-			MyIO.print(consoante ? "SIM " : "NAO ");
-			MyIO.print(inteiro ? "SIM " : "NAO ");
-			MyIO.println(real ? "SIM " : "NAO ");
-			entrada = MyIO.readLine();
-
-		}
-	}
-
-	static boolean isVogal(String frase){
-		//Itera pela string, caso ache consoante retorna false;
-		for(int i = 0; i < frase.length(); i++){
-			if(frase.charAt(i) != 'A' && frase.charAt(i) != 'E' && frase.charAt(i) != 'I' && frase.charAt(i) != 'O' && frase.charAt(i) != 'U' && frase.charAt(i) != ' ' && frase.charAt(i) != 'a' && frase.charAt(i) != 'e' && frase.charAt(i) != 'i' && frase.charAt(i) != 'o' && frase.charAt(i) != 'u'){
-				return false;
-			}
-		}
-		return true;
-	}
-
-	static boolean isConsoante(String frase){
-                //Itera pela string, caso ache vogal retorna false;
-                for(int i = 0; i < frase.length(); i++){
-                        if(frase.charAt(i) == 'A' && frase.charAt(i) == 'E' && frase.charAt(i) == 'I' && frase.charAt(i) == 'O' && frase.charAt(i) == 'U' && frase.charAt(i) == ' ' && frase.charAt(i) == 'a' && frase.charAt(i) == 'e' && frase.charAt(i) == 'i' && frase.charAt(i) == 'o' && frase.charAt(i) == 'u'){
-                                return false;
-                        }
-                }
-                return true;
+        try{
+            String entrada = cd.readLine();
+            while(!verificaFim(entrada)){
+                System.out.print(isVogal(entrada) ? "SIM " : "NAO ");
+                System.out.print(isConsoante(entrada) ? "SIM " : "NAO ");
+                System.out.print(isNumber(entrada) ? "SIM " : "NAO ");
+                System.out.println(isNumberReal(entrada) ? "SIM" : "NAO");
+                entrada = cd.readLine();
+            }
+        }catch(Exception e){
+            System.out.println(e);
         }
+    }
 
-	static boolean isInt(String frase){
-		//Itera pela string, caso encontre algo diferente de um numero retorn false;
-		for(int i = 0; i < frase.length(); i++){
-			if(frase.charAt(i) != "0" && frase.charAt(i) != "1" && frase.charAt(i) != "1" && frase.charAt(i) != "2" && frase.charAt(i) != "3" && frase.charAt(i) != "4" && frase.charAt(i) != "5" && frase.charAt(i) != "6" && frase.charAt(i) != "7" && frase.charAt(i) != "8" && frase.charAt(i) != "9"){
-			return false;
-			}
-		}
-		return true;
-	}
-	
-	static boolean isReal(String frase){
-		//Itera pela string, caso encontre alguma letra retorna false;
-                for(int i = 0; i < frase.length(); i++){
-                        if(frase.charAt(i) != "0" && frase.charAt(i) != "1" && frase.charAt(i) != "1" && frase.charAt(i) != "2" && frase.charAt(i) != "3" && frase.charAt(i) != "4" && frase.charAt(i) != "5" && frase.charAt(i) != "6" && frase.charAt(i) != "7" && frase.charAt(i) != "8" && frase.charAt(i) != "9" || frase.charAt(i) != "," || frase.charAt(i) != "."){
-                        return false;
-                        }
+    public static boolean isVogal(String texto){
+        String vogais = "aeiouAEIOU";
+        int count = 0;
+        for(int i = 0; i < texto.length(); i++){
+            for(int j = 0; j < vogais.length(); j++){
+                if(texto.charAt(i) == vogais.charAt(j)){
+                    count++;
                 }
-                return true;
+            }
         }
+        if(count == texto.length())
+            return true;
+        return false;
+    }
 
-	//Verifica se a entrada inserida = "FIM"
-	static boolean isFim(String frase){
-	
-		boolean aux = false;
+    public static boolean isConsoante(String texto){
+        String consoantes = "bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ";
+        int count = 0;
+        for(int i = 0; i < texto.length(); i++){
+            for(int j = 0; j < consoantes.length(); j++){
+                if(texto.charAt(i) == consoantes.charAt(j)){
+                    count++;
+                }
+            }
+        }
+        if(count == texto.length())
+            return true;
+        return false;
+    }
 
-		if(frase.charAt(0) != 'F' || frase.charAt(1) != 'I' || frase.charAt(2) != 'M'){
-			aux = true;
-		}
+    public static boolean isNumber(String texto){
+        String numeros = "0123456789";
+        int count = 0;
+        for(int i = 0; i < texto.length(); i++){
+            for(int j = 0; j < numeros.length(); j++){
+                if(texto.charAt(i) == numeros.charAt(j)){
+                    count++;
+                }
+            }
+        }
+        if(count == texto.length())
+            return true;
+        return false;
+    }
 
-		return aux;
-	}
+    public static boolean isNumberReal(String texto){
+        String numeros = "0123456789,.";
+        int count = 0;
+        for(int i = 0; i < texto.length(); i++){
+            for(int j = 0; j < numeros.length(); j++){
+                if(texto.charAt(i) == numeros.charAt(j)){
+                    count++;
+                }
+            }
+        }
+        if(count == texto.length())
+            return true;
+        return false;
+    }
+
+    public static boolean verificaFim(String texto) {
+        return (texto.length() >= 3 && texto.charAt(0) == 'F' && texto.charAt(1) == 'I' && texto.charAt(2) == 'M');
+    }
 }

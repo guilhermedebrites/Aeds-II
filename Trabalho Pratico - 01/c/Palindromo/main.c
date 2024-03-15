@@ -1,29 +1,29 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <string.h>
 
-#define TAMANHO_ARRAY 200
+int isPalindromo(char texto[]){
+    int len = strlen(texto);
 
-bool verifyPalindrome(char palavra[]){
-	int i, j;
-	for(i=0,j=(strlen(palavra)-1);i<(strlen(palavra)/2);i++,j--){
-		if(palavra[i] != palavra[j]){
-			return false;
-		}
-	}
-	return true;
+    for(int i = 0, j = len-2; i < j; i++, j--){
+        if(texto[i] != texto[j])
+            return 0;
+    }
+    return 1;
 }
 
-int main(){
+int isFim(char texto[]){
+    return (texto[0] == 'F' && texto[1] == 'I' && texto[2] == 'M');
+}
 
-	char* palavra = (char*)malloc(TAMANHO_ARRAY * sizeof(char));
+int main() {
+    char *entrada;
+    entrada = (char *)malloc(100 * sizeof(char));
 
-	scanf(" %[^\r\n]%*c", palavra);
-	while(strcmp(palavra, "FIM")){
-		printf("%s\n", verifyPalindrome(palavra) ? "SIM" : "NAO");
-		scanf(" %[^\r\n]%*c", palavra);
-	}
+    while(fgets(entrada, 100, stdin) && isFim(entrada) == 0){
+        isPalindromo(entrada) ? puts("SIM") : puts("NAO");
+    }
 
-return 0;
+    free(entrada);
+    return 0;
 }

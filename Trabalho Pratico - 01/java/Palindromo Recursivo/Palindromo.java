@@ -6,18 +6,22 @@ class Palindromo {
         Scanner sc = new Scanner(System.in);
         String entrada = sc.nextLine();
         while (verificaFim(entrada)) {
-            System.out.println(isPalindromo(entrada) ? "SIM" : "NAO");
+            System.out.println(isPalindromo(entrada, 0) ? "SIM" : "NAO");
             entrada = sc.nextLine();
         }
         sc.close();
     }
 
-    public static boolean isPalindromo(String texto) {
-        for (int i = 0, j = texto.length()-1; i < texto.length() / 2; i++, j--) {
-            if (texto.charAt(i) != texto.charAt(j))
-                return false;
-        }
-        return true;
+    public static boolean isPalindromo(String texto, int pos) {
+        boolean resp;
+
+        if(pos == texto.length()/2)
+            resp = true;
+        else if(texto.charAt(pos) != texto.charAt(texto.length() - pos - 1))
+            resp = false;
+        else
+            resp = isPalindromo(texto, pos + 1);
+        return resp;
     }
 
     public static boolean verificaFim(String texto) {
