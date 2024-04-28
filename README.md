@@ -16,3 +16,8 @@ Para clonar este repositório e visualizar os trabalhos, utilize o seguinte coma
 
 ```bash
 git clone https://github.com/guilhermedebrites/Aeds-II.git
+```
+
+## Contribuições
+
+Este repositório é utilizado para fins educacionais e de arquivamento dos trabalhos realizados. Contribuições e sugestões são bem-vindas através de pull requests.
