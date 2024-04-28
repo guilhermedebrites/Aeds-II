@@ -15,6 +15,10 @@ public class Selecao {
             array[i] = temp;
         }
 
+        for(int i = 0; i < array.length-1; i++){
+            int menor = i;
+        }
+
         for(int i = 0; i < names.length-1; i++){
             int menor = i;
             for(int j = i + 1; j < names.length; j++){

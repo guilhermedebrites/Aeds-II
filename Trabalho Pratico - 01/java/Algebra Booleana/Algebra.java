@@ -1,5 +1,5 @@
 class Algebra {
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         String entrada = MyIO.readLine();
         while(!verificaFim(entrada)){
         String algebraBooleana = tradeLetters(entrada);
@@ -27,7 +27,7 @@ class Algebra {
                 texto = texto.replace(charMap[i / 2 - 1], numero);
             }
         }
-        texto = texto.substring(qntVariables * 2 + 2, texto.length());
+        texto = texto.substring(qntVariables * 2 + 2);
         return texto;
     }
 
