@@ -1,0 +1,9 @@
+
+0
+java:S1220""Move this file to a named package.
+E
+java:S1197"*Move the array designators [] to the type.(¡þÏÖøÿÿÿÿ
+m
+java:S3776""RRefactor this method to reduce its Cognitive Complexity from 23 to the 15 allowed.(Øæïüýÿÿÿÿ
+S
+java:S6353'"=Use concise character class syntax '\\D' instead of '[^0-9]'.(Ë‚£‰
