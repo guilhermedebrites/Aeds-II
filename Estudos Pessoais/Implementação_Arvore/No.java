@@ -1,14 +1,14 @@
 package Implementação_Arvore;
 
 public class No {
-    public int elemento;
+    public String elemento;
     public No esq, dir;
 
-    public No(int elemento){
+    public No(String elemento){
         this(elemento, null, null);
     }
 
-    public No(int elemento, No esq, No dir){
+    public No(String elemento, No esq, No dir){
         this.elemento = elemento;
         this.esq = esq;
         this.dir = dir;

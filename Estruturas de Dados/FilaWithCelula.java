@@ -1,10 +1,9 @@
-//Fila = Estrutura básica de fila garante que o primeiro a entrar será o primeiro a sair(FIFO);
-public class Fila {
+public class FilaWithCelula {
     
     public CelulaTwo primeiro;
     public CelulaTwo ultimo;
 
-    public Fila(){
+    public FilaWithCelula(){
         primeiro = new CelulaTwo();
         ultimo = primeiro;
     }
@@ -16,14 +15,14 @@ public class Fila {
 
     public int remover() throws Exception{
         if(primeiro == ultimo){
-            throw new Exception("Erro ao remover, Lista vazia!");
+            throw new Exception("Fila vazia!");
         }
-        
+
         CelulaTwo tmp = primeiro;
+        int elemento = primeiro.elemento;
         primeiro = primeiro.prox;
-        int resp = tmp.elemento;
-        tmp.prox = null;
-        tmp = null;
-        return resp;
+        tmp = tmp.prox = null;
+        return elemento;
     }
+
 }

@@ -33,7 +33,7 @@ class Matrizes{
 }
 
 class Matriz {
-    private Celula inicio;
+    private CelulaTwo inicio;
     private int linha, coluna;
 
     public Matriz() {
@@ -48,8 +48,8 @@ class Matriz {
     }
 
     public void preencherMatriz(Scanner sc,int linha, int coluna){
-        Celula aux = this.inicio;
-        Celula auxLinha = this.inicio;
+        CelulaTwo aux = this.inicio;
+        CelulaTwo auxLinha = this.inicio;
 
         for(int i = 0; i < linha; i++){
             for(int j = 0; j < coluna; j++){
@@ -62,16 +62,16 @@ class Matriz {
     }
 
     private void alocarCelulas(){
-        Celula aux = inicio = new Celula();
-        Celula auxLinha = inicio;
+        CelulaTwo aux = inicio = new CelulaTwo();
+        CelulaTwo auxLinha = inicio;
 
         for(int i = 0; i < linha; i++){
             for(int j = 0; j < coluna - 1; j++){
-                aux.dir = new Celula();
+                aux.dir = new CelulaTwo();
                 aux.dir.esq = aux;
                 aux = aux.dir;
             }
-            auxLinha.baixo = new Celula();
+            auxLinha.baixo = new CelulaTwo();
             auxLinha.baixo.cima = auxLinha;
             auxLinha = aux = auxLinha.baixo;
         }
@@ -83,9 +83,9 @@ class Matriz {
       if(this.linha == m.linha && this.coluna == m.coluna){
         resp = new Matriz(this.linha, this.coluna);
         
-        Celula auxThis = this.inicio;
-        Celula auxM = m.inicio;
-        Celula auxC = resp.inicio;
+        CelulaTwo auxThis = this.inicio;
+        CelulaTwo auxM = m.inicio;
+        CelulaTwo auxC = resp.inicio;
 
         for(int i = 0; i < this.linha; i++){
             for(int j = 0; j < this.coluna; j++){
@@ -110,12 +110,12 @@ class Matriz {
         if (this.coluna == m.linha) {
             resp = new Matriz(this.linha, m.coluna);
 
-            Celula auxThisLinha = this.inicio;
-            Celula auxThisColuna = this.inicio;
-            Celula auxMLinha = m.inicio;
-            Celula auxMColuna = m.inicio;
-            Celula auxC = resp.inicio;
-            Celula auxCColuna = resp.inicio;
+            CelulaTwo auxThisLinha = this.inicio;
+            CelulaTwo auxThisColuna = this.inicio;
+            CelulaTwo auxMLinha = m.inicio;
+            CelulaTwo auxMColuna = m.inicio;
+            CelulaTwo auxC = resp.inicio;
+            CelulaTwo auxCColuna = resp.inicio;
 
             for (int i = 0; i < this.linha; i++) {
                 for (int j = 0; j < m.coluna; j++) {
@@ -163,7 +163,7 @@ class Matriz {
 
     public void mostrarDiagonalPrincipal() {
         if (isQuadrada()) {
-            Celula aux = this.inicio;
+            CelulaTwo aux = this.inicio;
 
             while (aux != null) {
                 System.out.print(aux.elemento + " ");
@@ -178,7 +178,7 @@ class Matriz {
 
     public void mostrarDiagonalSecundaria() {
         if (isQuadrada()) {
-            Celula aux = this.inicio;
+            CelulaTwo aux = this.inicio;
 
             while (aux.dir != null) {
                 aux = aux.dir;
@@ -195,10 +195,10 @@ class Matriz {
 
 
     public void mostrarMatriz() {
-        Celula auxLinha = this.inicio;
+        CelulaTwo auxLinha = this.inicio;
 
         for (int i = 0; i < this.linha; i++) {
-            Celula auxColuna = auxLinha;
+            CelulaTwo auxColuna = auxLinha;
 
             for (int j = 0; j < this.coluna; j++) {
                 System.out.print(auxColuna.elemento + " ");
@@ -214,7 +214,7 @@ class Matriz {
 
 class Celula {
     public int elemento;
-    public Celula esq, cima, dir, baixo;
+    public CelulaTwo esq, cima, dir, baixo;
 
     public Celula(){
         this(0);
@@ -225,7 +225,7 @@ class Celula {
         this.esq = this.cima = this.dir = this.baixo = null;
     }
 
-    public Celula(int elemento, Celula esq, Celula cima, Celula dir, Celula baixo){
+    public Celula(int elemento, CelulaTwo esq, CelulaTwo cima, CelulaTwo dir, CelulaTwo baixo){
         this.elemento = elemento;
         this.esq = esq;
         this.cima = cima;
