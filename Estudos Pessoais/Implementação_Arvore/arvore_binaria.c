@@ -19,55 +19,26 @@ typedef Struct{
     No *esq, *dir;
 } No;
 
-No* novoNo(int elemento) {
-   No* novo = (No*) malloc(sizeof(No));
-   novo->elemento = elemento;
-   novo->esq = NULL;
-   novo->dir = NULL;
-   return novo;
-}
-
-No* raiz;
-
-void start() {
-   raiz = NULL;
-}
-
 
 Celula* encontrarRepetidos(No* raiz, CelulaMatriz* inicio) {
     Celula* primeiro;
-    caminharCentral(primeiro, raiz, inicio);
-    return primeiro;
-}
-
-void caminharCentral(Celula* primeiro, No* i, CelulaMatriz* inicio) {
-    if (i != NULL) {
-
-        if(containsMatriz(inicio, i->elemento)){
-            ListaInserirInicio(primeiro, i->elemento)
-        }
-        caminharCentral(i->esq);
-        caminharCentral(i->dir);
-    }
-}
-
-bool containsMatriz(CelulaMatriz* primeiro, int elemento) {
-
-    bool resultado = false;
-
-    for(CelulaMatriz* i = inicio; i != NULL; i = i->inf){
-        for(CelulaMatriz* j = i; j != NULL; i = j->prox){
-            if(j->numero == numero){
-                resultado = true;
-                i = j = NULL;
+    for (CelulaMatriz i = inicio; i != null; i = i.inf) {
+            for (CelulaMatriz j = i; j != null; j = j.dir) {
+                contaisArvore(i.elemento, raiz, primeiro);
             }
         }
-    }
-    return resultado;
 }
 
-void ListaInserirInicio(Celula* primeiro, int elemento){
+No* contaisArvore(int elemento, No* i, Celula* primeiro) {
+    if(elemento == i.elemento){
+        adicionarLista(i.elemento, primeiro);
+    }
+    contaisArvore(elemento, i.esq);
+    contaisArvore(elemento, i.dir);
+}
+
+void adicionarLista(int elemento, Celula* primeiro) {
     Celula* nova = (Celula*)malloc(sizeof(Celula*));
-    nova->prox = primeiro->prox;
-    primeiro->prox = nova;
+    nova-prox = primeiro->prox;
+    primeiro.prox = nova;
 }

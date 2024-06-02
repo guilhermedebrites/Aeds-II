@@ -4,24 +4,35 @@
 #include <stdbool.h>
 #include <time.h>
 
+#define MAX_LENGTH 200
+
 typedef struct {
-    int id;
-    char nome[50];
-    int altura;
-    int peso;
-    char universidade[100];
-    int anoNascimento;
-    char cidadeNascimento[50];
-    char estadoNascimento[50];
-} Jogador;
+    char id[MAX_LENGTH];
+    char nome[MAX_LENGTH];
+    char alternate_names[MAX_LENGTH];
+    char house[MAX_LENGTH];
+    char ancestry[MAX_LENGTH];
+    char species[MAX_LENGTH];
+    char patronus[MAX_LENGTH];
+    bool hogwartsStaff;
+    bool hogwartsStudent;
+    char actorName[MAX_LENGTH];
+    bool alive;
+    char dateOfBirth[10];
+    int yearOfBirth;
+    char eyeColour[MAX_LENGTH];
+    char gender[MAX_LENGTH];
+    char hairColour[MAX_LENGTH];
+    bool wizard;
+} Personagem;
 
 typedef struct CelulaDupla {
-    Jogador dados;           
+    Personagem dados;           
     struct CelulaDupla* prox; 
     struct CelulaDupla* ant;
 } CelulaDupla;
 
-CelulaDupla* novaCelulaDupla(Jogador dados) {
+CelulaDupla* novaCelulaDupla(Personagem dados) {
     CelulaDupla* nova = (CelulaDupla*) malloc(sizeof(CelulaDupla));
     nova->dados = dados;
     nova->prox = NULL;
@@ -29,118 +40,165 @@ CelulaDupla* novaCelulaDupla(Jogador dados) {
     return nova;
 } 
 
-float inicioTempo, fimTempo;
-int comp = 0, mov = 0;
 CelulaDupla* primeiro;
 CelulaDupla* ultimo;
 
-void imprimir(Jogador *jogador) {
-    printf("[%i ## %s ## %i ## %i ## %i ## %s ## %s ## %s]\n", jogador->id, jogador->nome, jogador->altura, jogador->peso, jogador->anoNascimento, jogador->universidade, jogador->cidadeNascimento, jogador->estadoNascimento);
+void imprimir(Personagem *personagem) {
+    int len = strlen(personagem->alternate_names);
+    for (int i = 0; i < len; i++) {
+        if (personagem->alternate_names[i] == '[') {
+            personagem->alternate_names[i] = '{';
+        } else if (personagem->alternate_names[i] == ']') {
+            personagem->alternate_names[i] = '}';
+        } else if (personagem->alternate_names[i] == '\'') {
+            memmove(&personagem->alternate_names[i], &personagem->alternate_names[i + 1], strlen(personagem->alternate_names) - i);
+            i--;
+        }
+    }
+
+    printf("[%s ## %s ## %s ## %s ## %s ## %s ## %s ## %s ## %s ## %s ## %s ## %s ## %d ## %s ## %s ## %s ## %s]\n",
+           strcmp(personagem->id, "-1") != 0 ? personagem->id : "", 
+           strcmp(personagem->nome, "-1") != 0 ? personagem->nome : "", 
+           strcmp(personagem->alternate_names, "-1") != 0 ? personagem->alternate_names : "", 
+           strcmp(personagem->house, "-1") != 0 ? personagem->house : "",
+           strcmp(personagem->ancestry, "-1") != 0 ? personagem->ancestry : "", 
+           strcmp(personagem->species, "-1") != 0 ? personagem->species : "", 
+           strcmp(personagem->patronus, "-1") != 0 ? personagem->patronus : "",
+           personagem->hogwartsStaff == 1 ? "true" : "false", 
+           personagem->hogwartsStudent == 1 ? "true" : "false",
+           strcmp(personagem->actorName, "-1") != 0 ? personagem->actorName : "", 
+           personagem->alive == 1 ? "true" : "false", 
+           strcmp(personagem->dateOfBirth, "-1") != 0 ? personagem->dateOfBirth : "",
+           personagem->yearOfBirth, 
+           strcmp(personagem->eyeColour, "-1") != 0 ? personagem->eyeColour : "", 
+           strcmp(personagem->gender, "-1") != 0 ? personagem->gender : "", 
+           strcmp(personagem->hairColour, "-1") != 0 ? personagem->hairColour : "",
+           personagem->wizard == 1 ? "true" : "false");
 }
 
-void substituirVirgula(char *str) {
+void replaceDoubleViruglas(char *str) {
     int tamanho = strlen(str);
     char tmp[3 * tamanho];
     int j = 0; 
 
     for (int i = 0; i < tamanho; i++) {
-        if (str[i] == ',' && str[i+1] == ',') {
-            tmp[j++] = ','; 
-            tmp[j++] = 'n';
-            tmp[j++] = 'a';
-            tmp[j++] = 'o';
-            tmp[j++] = ' ';
-            tmp[j++] = 'i';
-            tmp[j++] = 'n';
-            tmp[j++] = 'f';
-            tmp[j++] = 'o';
-            tmp[j++] = 'r';
-            tmp[j++] = 'm';
-            tmp[j++] = 'a';
-            tmp[j++] = 'd';
-            tmp[j++] = 'o';
-            tmp[j++] = ',';
+        if (str[i] == ';' && str[i+1] == ';') {
+            tmp[j++] = ';'; 
+            tmp[j++] = '-';
+            tmp[j++] = '1';
+            tmp[j++] = ';';
             
             i++;
         } else {
             tmp[j++] = str[i];
         }
+        
     }
-
-    if (tmp[j - 2] == ',') {
-        tmp[j-1] = 'n';
-        tmp[j++] = 'a';
-        tmp[j++] = 'o';
-        tmp[j++] = ' ';
-        tmp[j++] = 'i';
-        tmp[j++] = 'n';
-        tmp[j++] = 'f';
-        tmp[j++] = 'o';
-        tmp[j++] = 'r';
-        tmp[j++] = 'm';
-        tmp[j++] = 'a';
-        tmp[j++] = 'd';
-        tmp[j++] = 'o';
-    }
-
     tmp[j] = '\0';
     strcpy(str, tmp);
 }
 
-void ler(char str[300], Jogador *jogador) {
-    substituirVirgula(str);
-    str[strcspn(str, "\n")] = '\0'; 
-    char *tmp;
-    int i = 0;
-    tmp = strtok(str, ",");
+void ler(Personagem *personagem, char *str) {
+    replaceDoubleViruglas(str);
+    char *token = strtok(str, ";");
+    int fieldIndex = 0;
 
-    while(tmp != NULL) {
-        if(i % 8 == 0) {
-            jogador->id = atoi(tmp);
-        } else if(i % 8 == 1) {
-            strcpy(jogador->nome, tmp);
-        } else if(i % 8 == 2) {
-            jogador->altura = atoi(tmp);
-        } else if(i % 8 == 3) {
-            jogador->peso = atoi(tmp);
-        } else if(i % 8 == 4) {
-            strcpy(jogador->universidade, tmp);
-        } else if(i % 8 == 5) {
-            jogador->anoNascimento = atoi(tmp);
-        } else if(i % 8 == 6) {
-            strcpy(jogador->cidadeNascimento, tmp);
-        } else if(i % 8 == 7) {
-            strcpy(jogador->estadoNascimento, tmp);
+    while (token != NULL) {
+        switch (fieldIndex) {
+            case 0: strcpy(personagem->id, token); break;
+            case 1: strcpy(personagem->nome, token); break;
+            case 2: strcpy(personagem->alternate_names, token); break;
+            case 3: strcpy(personagem->house, token); break;
+            case 4: strcpy(personagem->ancestry, token); break;
+            case 5: strcpy(personagem->species, token); break;
+            case 6: strcpy(personagem->patronus, token); break;
+            case 7: personagem->hogwartsStaff = (strlen(token) == 6 ? 0 : 1); break;
+            case 8: personagem->hogwartsStudent = (strlen(token) == 6 ? 0 : 1); break;
+            case 9: strcpy(personagem->actorName, token); break;
+            case 10: personagem->alive = (strlen(token) == 6 ? 0 : 1); break;
+            case 12: strcpy(personagem->dateOfBirth, token); break;
+            case 13: personagem->yearOfBirth = atoi(token); break;
+            case 14: strcpy(personagem->eyeColour, token); break;
+            case 15: strcpy(personagem->gender, token); break;
+            case 16: strcpy(personagem->hairColour, token); break;
+            case 17: personagem->wizard = (strlen(token) == 6 ? 0 : 1); break;
+            default: break;
         }
-        i++;
-        tmp = strtok(NULL, ",");
-    }   
+        fieldIndex++;
+        token = strtok(NULL, ";");
+    }
 }
 
-void clonar(Jogador *jogador, Jogador *novo) {
-    novo->id = jogador->id;
-    strcpy(novo->nome, jogador->nome);
-    novo->altura = jogador->altura;
-    novo->peso = jogador->peso;
-    strcpy(novo->universidade, jogador->universidade);
-    novo->anoNascimento = jogador->anoNascimento;
-    strcpy(novo->cidadeNascimento, jogador->cidadeNascimento);
-    strcpy(novo->estadoNascimento, jogador->estadoNascimento);
+void clone(Personagem *personagem, Personagem *novo) {
+    strcpy(novo->id, personagem->id);
+    strcpy(novo->nome, personagem->nome);
+    strcpy(novo->alternate_names, personagem->alternate_names);
+    strcpy(novo->house, personagem->house);
+    strcpy(novo->ancestry, personagem->ancestry);
+    strcpy(novo->species, personagem->species);
+    strcpy(novo->patronus, personagem->patronus);
+    novo->hogwartsStaff = personagem->hogwartsStaff;
+    novo->hogwartsStudent = personagem->hogwartsStudent;
+    strcpy(novo->actorName, personagem->actorName);
+    novo->alive = personagem->alive;
+    strcpy(novo->dateOfBirth, personagem->dateOfBirth);
+    novo->yearOfBirth = personagem->yearOfBirth;
+    strcpy(novo->eyeColour, personagem->eyeColour);
+    strcpy(novo->gender, personagem->gender);
+    strcpy(novo->hairColour, personagem->hairColour);
+    novo->wizard = personagem->wizard;
 }
 
-void trocar(Jogador *j1, Jogador *j2) {
-    mov += 3;
-    Jogador tmp;
-    clonar(j1, &tmp);
-    clonar(j2, j1);
-    clonar(&tmp, j2);
-    mov += 3;
+void ordenaQuick(Personagem *personagem, int esq, int dir){
+    int i = esq, j = dir;
+    Personagem personagemPivo = personagem[(dir+esq) / 2];
+
+    char pivoHouse[MAX_LENGTH];
+    strcpy(pivoHouse, personagemPivo.house);
+
+    while(i <= j){
+        while(strcmp(personagem[i].house, pivoHouse) < 0 || (strcmp(personagem[i].house, pivoHouse) == 0 && strcmp(personagem[i].nome, personagemPivo.nome) < 0)){
+            i++;
+        }
+        while(strcmp(personagem[j].house, pivoHouse) > 0 || (strcmp(personagem[j].house, pivoHouse) == 0 && strcmp(personagem[j].nome, personagemPivo.nome) > 0)){
+            j--;
+        }
+        if(i <= j){
+            Personagem temp = personagem[i];
+            personagem[i] = personagem[j];
+            personagem[j] = temp;
+            i++;
+            j--;
+        }
+    }
+
+    if(esq < j){
+        ordenaQuick(personagem, esq, j);
+    }
+    if(i < dir){
+        ordenaQuick(personagem, i, dir);
+    } 
 }
 
-void inserirNoFim(Jogador jogador) {
-    ultimo->prox = novaCelulaDupla(jogador);
-    ultimo->prox->ant = ultimo;
-    ultimo = ultimo->prox;
+void inicializarLista() {
+    Personagem tmp;
+    strcpy(tmp.id, "-1");
+    strcpy(tmp.nome, "-1");
+    strcpy(tmp.alternate_names, "-1");
+    strcpy(tmp.house, "-1");
+    strcpy(tmp.ancestry, "-1");
+    strcpy(tmp.species, "-1");
+    strcpy(tmp.patronus, "-1");
+    tmp.hogwartsStaff = false;
+    tmp.hogwartsStudent = false;
+    strcpy(tmp.actorName, "-1");
+    tmp.alive = false;
+    strcpy(tmp.dateOfBirth, "-1");
+    tmp.yearOfBirth = -1;
+    strcpy(tmp.eyeColour, "-1");
+    strcpy(tmp.gender, "-1");
+    strcpy(tmp.hairColour, "-1");
+    tmp.wizard = false;
 }
 
 void mostrarLista() {
@@ -151,112 +209,44 @@ void mostrarLista() {
     }
 }
 
-int calcularTamanho() {
-   int tamanho = 0; 
-   CelulaDupla* i;
-   for(i = primeiro; i != ultimo; i = i->prox, tamanho++);
-   return tamanho;
-}
-
-void inicializarLista() {
-    Jogador tmp;
-    tmp.id = 0;
-    strcpy(tmp.nome, "");
-    tmp.altura = 0;
-    tmp.peso = 0;
-    strcpy(tmp.universidade, "");
-    tmp.anoNascimento = 0;
-    strcpy(tmp.cidadeNascimento, "");
-    strcpy(tmp.estadoNascimento, "");
-
-    primeiro = novaCelulaDupla(tmp);
-    ultimo = primeiro;
-}
-
-void ordenarQuickSortRecursivo(CelulaDupla* esquerda, CelulaDupla* direita) {
-    CelulaDupla* i = esquerda;
-    CelulaDupla* j = direita;
-    CelulaDupla* pivo = direita;
-
-    while(i->ant != j && i->ant != j->prox) {
-        comp++;
-        while(strcmp(i->dados.estadoNascimento, pivo->dados.estadoNascimento) < 0 ||
-              (strcmp(i->dados.estadoNascimento, pivo->dados.estadoNascimento) == 0 &&
-               strcmp(i->dados.nome, pivo->dados.nome) < 0)) {
-            i = i->prox;
-            comp++;
-        }
-
-        comp++;
-        while(strcmp(j->dados.estadoNascimento, pivo->dados.estadoNascimento) > 0 ||
-              (strcmp(j->dados.estadoNascimento, pivo->dados.estadoNascimento) == 0 &&
-               strcmp(j->dados.nome, pivo->dados.nome) > 0)) {
-            j = j->ant;
-            comp++;
-        }
-
-        if(i->ant != j && i->ant != j->prox) {
-            trocar(&i->dados, &j->dados);
-            i = i->prox;
-            j = j->ant;
-        }
-    }
-
-    if(j != esquerda && esquerda->ant != j) {
-        ordenarQuickSortRecursivo(esquerda, j);
-    }
-    if(i != direita && direita->prox != i) {
-        ordenarQuickSortRecursivo(i, direita);
-    }
-}
-
-void ordenarQuickSort() {
-    ordenarQuickSortRecursivo(primeiro->prox, ultimo);
-} 
-
 int main() {
-    Jogador jogadores[3923];
-    char entrada[5];
+    Personagem characters[406];
+    Personagem arrayPersonagem[30];
+    int tamArray = 0;
+    char n[50];
 
-    FILE *arquivo;
-    arquivo = fopen("/tmp/players.csv", "r");
-
-    if(arquivo == NULL) {
-        printf("Erro ao abrir o arquivo\n");
-        return 1;
+    FILE *arq = fopen("/tmp/characters.csv", "r");
+    if (arq == NULL) {
+        printf("File not found\n");
+        return 0;
     }
 
-    char linha[300];
-    fgets(linha, sizeof(linha), arquivo); 
+    char str[300];
+    fgets(str, sizeof(str), arq);
     int i = 0;
-    while (fgets(linha, sizeof(linha), arquivo)) {
-        ler(linha, &jogadores[i]);
+    while (fgets(str, sizeof(str), arq)) {
+        ler(&characters[i], str);
         i++;
     }
 
-    fclose(arquivo);
-
-    scanf("%s", entrada);
-    int j = 0;
-    Jogador temporario;
-    inicializarLista();
-    while(strcmp(entrada, "FIM") != 0) {
-        clonar(&jogadores[atoi(entrada)], &temporario);
-        inserirNoFim(temporario);
-        scanf("%s", entrada);
+    fclose(arq);
+    scanf(" %[^\r\n]s", n);
+    while(strcmp(n, "FIM") != 0){
+        for (int i = 0; i < 406; i++) {
+            if (strcmp(characters[i].id, n) == 0) {
+                arrayPersonagem[tamArray] = characters[i];
+                tamArray++;
+                break;
+            }
+        }
+        scanf(" %[^\r\n]s", n);
     }
-    
-    inicioTempo = clock();
-    ordenarQuickSort();
-    fimTempo = clock();
 
-    mostrarLista();
+    ordenaQuick(arrayPersonagem, 0, tamArray - 1);
 
-    float tempo = fimTempo - inicioTempo;  
-
-    arquivo = fopen("808721_quicksort2.txt", "w");
-    fprintf(arquivo, "808721\t %i\t %i\t %fs", comp, mov, tempo/1000.0);
-    fclose(arquivo);
+    for (int i = 0; i < tamArray; i++) {
+        imprimir(&arrayPersonagem[i]);
+    }
 
     return 0;
 }
