@@ -69,36 +69,25 @@ public class ArvoreBinaria {
         }
     }
 
-    // private static int count = 0;
+    public No rotacionarEsq(No no) {
+        No noDir = no.dir;
+        No noDirEsq = noDir.esq;
 
-    // public int contarPalavras(char primeiro, char ultimo) {
-    //     No palavraInicio = findFirstNo(raiz, primeiro);
-    //     caminharCentral(palavraInicio, ultimo);
+        noDir.esq = no;
+        no.dir = noDirEsq;
 
-    //     return 1;
-    // }
+        return noDir;
+    }
 
-    // public No findFirstNo(No i, char primeiro) {
-    //     if(i != null) {
-    //         caminharCentral(i.esq);
-    //         if(i.elemento.startsWith(String.valueOf(primeiro))){
-    //             return i;
-    //         }
-    //         caminharCentral(i.dir);
-    //     }
+    public No rotacionarDir(No no) {
+        No noEsq = no.esq;
+        No noEsqDir = noEsq.dir;
 
-    //     return null;
-    // }
+        noEsq.dir = no;
+        no.esq = noEsqDir;
 
-    // public void caminharCentral(No i, char ultimo) {
-    //     if(i != null) {
-    //         caminharCentral(i.esq);
-    //         if(i.elemento.endsWith(String.valueOf(ultimo))){
-    //             count++;
-    //         }
-    //         caminharCentral(i.dir);
-    //     }
-    // }
+        return noEsq;
+    }
 
 }
 
