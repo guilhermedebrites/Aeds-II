@@ -10,7 +10,6 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public class Personagem {
-
     private UUID id;
     private String name;
     private ArrayList<String> alternate_names;
@@ -224,13 +223,13 @@ public class Personagem {
     }
 
     public static void main(String[] args) {
-        long startTime = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis(); // Início do tempo de execução
         int numComparacoes = 0;
 
         String nomeDoArquivo = "/tmp/characters.csv";
 
         Map<UUID, Personagem> personagens = new HashMap<>();
-        ArvoreAlvinegra arvore = new ArvoreAlvinegra();
+        TabelaHashDiretaComRehash tabelaHash = new TabelaHashDiretaComRehash(21);
 
         Personagem personagem = new Personagem();
         personagem.ler(nomeDoArquivo, personagens);
@@ -243,26 +242,26 @@ public class Personagem {
             entrada = br.readLine();
             while (!entrada.equals("FIM")) {
                 Personagem perso = personagens.get(UUID.fromString(entrada));
-                arvore.inserir(perso);
+                tabelaHash.inserir(perso);
                 entrada = br.readLine();
             }
 
             entrada = br.readLine();
             while (!entrada.equals("FIM")) {
-                System.out.print(entrada + " => ");
-                String caminho = arvore.pesquisarCaminho(entrada);
-                numComparacoes += arvore.getNumComparacoes();
-                System.out.println(caminho);
+                String resultado = tabelaHash.pesquisar(entrada);
+                numComparacoes += tabelaHash.getNumComparacoes();
+                System.out.println(resultado);
                 entrada = br.readLine();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        long endTime = System.currentTimeMillis(); 
-        long executionTime = endTime - startTime; 
+        long endTime = System.currentTimeMillis(); // Fim do tempo de execução
+        long executionTime = endTime - startTime; // Tempo total de execução
 
-        String logFilename = "808721_alvinegra.txt";
+        // Escrever informações no arquivo de log
+        String logFilename = "808721_hashRehash.txt";
         try (FileWriter logFile = new FileWriter(logFilename)) {
             logFile.write("808721\t" + executionTime + " ms\t" + numComparacoes + " comparações\n");
         } catch (IOException e) {
@@ -327,6 +326,7 @@ public class Personagem {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
                 return LocalDate.parse(dateString, formatter);
             } catch (DateTimeParseException e) {
+                // Continue tentando com o próximo padrão
             }
         }
 
@@ -334,158 +334,77 @@ public class Personagem {
     }
 }
 
-class No {
-    public Personagem elemento;
-    public No esq, dir, pai;
-    public boolean cor; 
-
-    public No(Personagem elemento) {
-        this(elemento, null, null, null, true);
-    }
-
-    public No(Personagem elemento, No esq, No dir, No pai, boolean cor) {
-        this.elemento = elemento;
-        this.esq = esq;
-        this.dir = dir;
-        this.pai = pai;
-        this.cor = cor;
-    }
-}
-
-class ArvoreAlvinegra {
-    private No raiz;
+class TabelaHashDiretaComRehash {
+    private Personagem[] tabela;
+    private int tamTab;
     private int numComparacoes;
 
-    public ArvoreAlvinegra() {
-        raiz = null;
-        numComparacoes = 0;
+    public TabelaHashDiretaComRehash(int tamTab) {
+        this.tamTab = tamTab;
+        this.tabela = new Personagem[tamTab];
+        this.numComparacoes = 0;
     }
 
     public int getNumComparacoes() {
         return numComparacoes;
     }
 
-    public void inserir(Personagem elemento) {
-        No novo = new No(elemento);
-        if (raiz == null) {
-            raiz = novo;
-            raiz.cor = false; // Raiz é sempre preta
-        } else {
-            inserir(raiz, novo);
-            balancearInsercao(novo);
+    private int calcularHash(String chave) {
+        int asciiSum = 0;
+        for (char c : chave.toCharArray()) {
+            asciiSum += c;
         }
+        return asciiSum % tamTab;
     }
 
-    private void inserir(No atual, No novo) {
-        if (novo.elemento.getName().compareTo(atual.elemento.getName()) < 0) {
-            if (atual.esq == null) {
-                atual.esq = novo;
-                novo.pai = atual;
-            } else {
-                inserir(atual.esq, novo);
-            }
-        } else {
-            if (atual.dir == null) {
-                atual.dir = novo;
-                novo.pai = atual;
-            } else {
-                inserir(atual.dir, novo);
-            }
+    private int calcularRehash(String chave, int tentativa) {
+        int asciiSum = 0;
+        for (char c : chave.toCharArray()) {
+            asciiSum += c;
         }
+        return (asciiSum + tentativa) % tamTab;
     }
 
-    private void balancearInsercao(No no) {
-        while (no != raiz && no.pai.cor == true) {
-            if (no.pai == no.pai.pai.esq) {
-                No tio = no.pai.pai.dir;
-                if (tio != null && tio.cor == true) {
-                    no.pai.cor = false;
-                    tio.cor = false;
-                    no.pai.pai.cor = true;
-                    no = no.pai.pai;
-                } else {
-                    if (no == no.pai.dir) {
-                        no = no.pai;
-                        rotacaoEsquerda(no);
-                    }
-                    no.pai.cor = false;
-                    no.pai.pai.cor = true;
-                    rotacaoDireita(no.pai.pai);
+    public void inserir(Personagem personagem) {
+        String nome = personagem.getName();
+        int posicao = calcularHash(nome);
+        if (tabela[posicao] == null) {
+            tabela[posicao] = personagem;
+        } else {
+            int tentativa = 1;
+            int novaPosicao;
+            while (tentativa < tamTab) { // Limitar o número de tentativas ao tamanho da tabela
+                novaPosicao = calcularRehash(nome, tentativa);
+                if (tabela[novaPosicao] == null) {
+                    tabela[novaPosicao] = personagem;
+                    break;
                 }
-            } else {
-                No tio = no.pai.pai.esq;
-                if (tio != null && tio.cor == true) {
-                    no.pai.cor = false;
-                    tio.cor = false;
-                    no.pai.pai.cor = true;
-                    no = no.pai.pai;
-                } else {
-                    if (no == no.pai.esq) {
-                        no = no.pai;
-                        rotacaoDireita(no);
-                    }
-                    no.pai.cor = false;
-                    no.pai.pai.cor = true;
-                    rotacaoEsquerda(no.pai.pai);
-                }
+                tentativa++;
             }
         }
-        raiz.cor = false;
     }
 
-    private void rotacaoEsquerda(No no) {
-        No direito = no.dir;
-        no.dir = direito.esq;
-        if (direito.esq != null) {
-            direito.esq.pai = no;
-        }
-        direito.pai = no.pai;
-        if (no.pai == null) {
-            raiz = direito;
-        } else if (no == no.pai.esq) {
-            no.pai.esq = direito;
-        } else {
-            no.pai.dir = direito;
-        }
-        direito.esq = no;
-        no.pai = direito;
-    }
-
-    private void rotacaoDireita(No no) {
-        No esquerdo = no.esq;
-        no.esq = esquerdo.dir;
-        if (esquerdo.dir != null) {
-            esquerdo.dir.pai = no;
-        }
-        esquerdo.pai = no.pai;
-        if (no.pai == null) {
-            raiz = esquerdo;
-        } else if (no == no.pai.dir) {
-            no.pai.dir = esquerdo;
-        } else {
-            no.pai.esq = esquerdo;
-        }
-        esquerdo.dir = no;
-        no.pai = esquerdo;
-    }
-
-    public String pesquisarCaminho(String nome) {
+    public String pesquisar(String nome) {
         numComparacoes = 0;
-        return pesquisarCaminho(nome, raiz, "raiz");
-    }
-
-    private String pesquisarCaminho(String nome, No no, String caminho) {
-        if (no == null) {
-            return caminho + " NAO";
-        }
-
+        int posicao = calcularHash(nome);
         numComparacoes++;
-        if (nome.compareTo(no.elemento.getName()) < 0) {
-            return pesquisarCaminho(nome, no.esq, caminho + " esq");
-        } else if (nome.compareTo(no.elemento.getName()) > 0) {
-            return pesquisarCaminho(nome, no.dir, caminho + " dir");
+        if (tabela[posicao] != null && tabela[posicao].getName().equals(nome)) {
+            return nome + " (pos: " + posicao + ") SIM";
         } else {
-            return caminho + " SIM";
+            int tentativa = 1;
+            int novaPosicao;
+            while (tentativa < tamTab) { // Limitar o número de tentativas ao tamanho da tabela
+                novaPosicao = calcularRehash(nome, tentativa);
+                numComparacoes++;
+                if (tabela[novaPosicao] == null) {
+                    break;
+                }
+                if (tabela[novaPosicao].getName().equals(nome)) {
+                    return nome + " (pos: " + novaPosicao + ") SIM";
+                }
+                tentativa++;
+            }
         }
+        return nome + " NAO";
     }
 }
