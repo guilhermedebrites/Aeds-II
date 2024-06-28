@@ -1,6 +1,6 @@
 # Algoritmos e Estruturas de Dados 2 - PUC Minas, Coreu, 2024
 
-Este repositório contém todas as atividades e trabalhos desenvolvidos para a disciplina de Algoritmos e Estruturas de Dados 2, cursada no 3º período de Ciências da Computação na PUC Minas.
+Este repositório contém todas as atividades e trabalhos desenvolvidos para a disciplina de Algoritmos e Estruturas de Dados 2, cursada no 2º período de Ciências da Computação na PUC Minas.
 
 ## Sobre a Disciplina
 
